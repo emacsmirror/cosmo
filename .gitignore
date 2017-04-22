@@ -1,0 +1,15 @@
+# Compiled
+*.elc
+
+# Packaging
+.cask
+
+# Backup files
+*~
+
+# Undo-tree save-files
+*.~undo-tree
+
+# Docs temporarily exported
+docs/README.txt
+docs/README.html

@@ -1,0 +1,117 @@
+#+TITLE: cosmo.el
+#+AUTHOR: Francesco Montanari
+
+cosmo.el --- Cosmological Calculator
+
+Copyright (C) 2017 Francesco Montanari
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+* Description
+
+  This package provides a cosmological calculator integrated into the
+  Emacs text editor.
+
+  Cosmological quantities are computed for a Lambda-CDM model. Such a
+  framework describes a homogeneous and isotropic universe containing
+  a cosmological constant (Lambda) and a Cold Dark Matter (CDM)
+  component, besides ordinary species. The model is characterized by
+  the following parameters:
+  - H_0 :: Hubble parameter (expansion rate) today
+  - Omega_m0 :: Fractional matter density parameter today.
+  - Omega_Lambda ::  Cosmological constant density parameter. At the
+                     moment we consider only flat Lambda-CDM models,
+                     for which =Omega_Lambda = 1 - Omega_m0=.
+
+  All cosmological quantities are computed at a given redshift value:
+  - redshift :: Gravitational redshift of photons frequency due to the
+                expansion of the Universe.
+
+* Download
+
+  The source code can be downloaded from the [[https://gitlab.com/montanari/cosmo-el][git repository page]].
+
+  Alternatively, the git repository can be cloned:
+  #+BEGIN_SRC shell
+  git clone git@gitlab.com:montanari/cosmo-el.git
+  #+END_SRC
+
+* Installation
+
+  Copy the =cosmo-el= file into your Emacs configuration
+  directory. E.g., on GNU systems:
+
+  #+BEGIN_SRC shell
+  mkdir ~/.emacs.d/cosmo-el
+  cp cosmo.el ~/.emacs.d/cosmo-el
+  #+END_SRC
+
+  Open your Emacs configuration file (e.g., =~\/.emacs= on GNU
+  systems), and add the following lines:
+
+  #+BEGIN_SRC emacs-lisp
+  ;; Cosmological calculator
+  (add-to-list 'load-path "~/.emacs.d/cosmo-el/")
+  (require 'cosmo)
+  #+END_SRC
+
+* Usage
+
+  Open Emacs and type =M-x cosmo-command=, where the =command= name
+  varies depending on the desired computation. For example:
+
+  - cosmo-set-params :: Set cosmological parameters.
+
+  - cosmo-calculator :: Compute cosmology and display summary table in
+       a new buffer. The following illustrates a possible output:
+       #+BEGIN_EXAMPLE
+       Cosmology calculator.
+
+       Input Parameters
+       ----------------
+       - Redshift:                       	0.1
+       - Hubble constant, now [km/s/Mpc]:	70
+       - Matter fractional density, now: 	0.3
+       <...>
+
+       Cosmography at required redshift
+       -------------------------------
+       - Hubble parameter [km/s/Mpc]:	73.39325582095401
+       <...>
+       #+END_EXAMPLE
+
+  A complete list of interactive commands can be obtained by typing
+  =M-x cosmo- TAB=. Documentation is available through =C-h f
+  cosmo-command=, where =command= should be adapted to the particular
+  command.
+
+* Support
+
+  Bugs and issues are tracked through the [[https://gitlab.com/montanari/cosmo-el][git repository page]]. Please
+  see [[http://www.chiark.greenend.org.uk/~sgtatham/bugs.html][this page]] about how to report bugs effectively.
+
+* Contributing
+
+  /The project is still at an early stage/. Recommendations (and
+  contributions) aimed to improve the source code are highly
+  appreciated. New feature suggestions are also welcome, but at this
+  point priority will be given to reach an idiomatic and extensible
+  code.
+
+  Contributions can be submitted as patches. See [[http://orgmode.org/worg/org-contribute.html#patches][this page]] for an
+  example of good patches contributions.
+
+  More substantial contributions should proceed through git
+  [[https://git-scm.com/book/en/v2/Distributed-Git-Distributed-Workflows][Integration-Manager Workflow]]. See [[https://www.gnu.org/software/gnuastro/manual/html_node/Contributing-to-Gnuastro.html][this page]] for an example of a
+  complete working session.
