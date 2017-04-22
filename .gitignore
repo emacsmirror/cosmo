@@ -11,5 +11,4 @@
 *.~undo-tree
 
 # Docs temporarily exported
-docs/README.txt
-docs/README.html
+README.html

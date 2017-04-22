@@ -49,7 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 * Installation
 
-  Copy the =cosmo-el= file into your Emacs configuration
+  Copy the =cosmo.el= file into your Emacs configuration
   directory. E.g., on GNU systems:
 
   #+BEGIN_SRC shell
