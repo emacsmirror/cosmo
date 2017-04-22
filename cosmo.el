@@ -38,6 +38,7 @@
 
 
 (defun cosmo-set-default ()
+  "Set cosmological parameters to the default values."
   (interactive)
   "Set cosmological parameters table to default values"
   (clrhash cosmo--params)
@@ -69,7 +70,7 @@
 
 
 (defun cosmo-set-params ()
-  "Set cosmological parameters."
+  "Change the values of cosmological parameters."
   (interactive)
   (let ((params (hash-table-keys cosmo--params)))
     (dolist (param params)
