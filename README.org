@@ -3,7 +3,7 @@
 
 cosmo.el --- Cosmological Calculator
 
-Copyright (C) 2017 Francesco Montanari
+Copyright (C) 2017 Francesco Montanari [[mailto:fmnt@fmnt.info][<fmnt@fmnt.info>]]
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -68,12 +68,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 * Usage
 
-  Open Emacs and type =M-x cosmo-command=, where the =command= name
+  Open Emacs and type =M-x cosmo-command=,[fn:1] where the =command= name
   varies depending on the desired computation. For example:
 
-  - cosmo-set-params :: Set cosmological parameters.
+  - M-x cosmo-set-params :: Set cosmological parameters.
 
-  - cosmo-calculator :: Compute cosmology and display summary table in
+  - M-x cosmo-calculator :: Compute cosmology and display summary table in
        a new buffer. The following illustrates a possible output:
        #+BEGIN_EXAMPLE
        Cosmology calculator.
@@ -98,6 +98,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 * Support
 
+  Homepage: <http://fmnt.info/software/cosmo-el.html>.
+
   Bugs and issues are tracked through the [[https://gitlab.com/montanari/cosmo-el][git repository page]]. Please
   see [[http://www.chiark.greenend.org.uk/~sgtatham/bugs.html][this page]] about how to report bugs effectively.
 
@@ -115,3 +117,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   More substantial contributions should proceed through git
   [[https://git-scm.com/book/en/v2/Distributed-Git-Distributed-Workflows][Integration-Manager Workflow]]. See [[https://www.gnu.org/software/gnuastro/manual/html_node/Contributing-to-Gnuastro.html][this page]] for an example of a
   complete working session.
+
+* Footnotes
+
+[fn:1] The notation =M-x= means that the =ALT= and =x= keys should be
+  pressed simultaneously.
