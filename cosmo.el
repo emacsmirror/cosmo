@@ -23,6 +23,21 @@
 ;;
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+;;
+;;
+;;; Commentary:
+;;
+;; This program provides a cosmological calculator for Lambda-CDM
+;; cosmological models. Such a framework describes a homogeneous and
+;; isotropic universe containing a cosmological constant (Lambda) and
+;; a Cold Dark Matter (CDM) component, besides ordinary
+;; species.
+;;
+;; Several interactive commands are provided to set the cosmological
+;; parameters and to compute cosmological functions at given redshift
+;; values.
+;;
+;;; Code:
 
 
 (require 'subr-x)
@@ -30,42 +45,37 @@
 
 ;; Define in this table all independent cosmological parameters
 (defconst cosmo--params (make-hash-table :test 'equal)
-  "Table containing LCDM cosmological parameters")
+  "Table containing LCDM cosmological parameters.")
 
-;; For flat LCDM olambda is a derived parameter
-(defconst cosmo--olambda 0.7
-  "Cosmological constant density parameter.")
+
+(defun cosmo--get-olambda ()
+  "Get cosmological constant density parameter according to flat LCDM."
+  (- 1. (gethash "omatter" cosmo--params)))
 
 
 (defun cosmo-set-default ()
   "Set cosmological parameters to the default values."
   (interactive)
-  "Set cosmological parameters table to default values"
-  (clrhash cosmo--params)
-  (puthash "H0 [Km/s/Mpc]" 70.0 cosmo--params) ; Hubble today km/s/Mpc
-  (puthash "omatter" 0.3 cosmo--params)        ; Matter today
-  )
+    (clrhash cosmo--params)
+    (puthash "H0 [Km/s/Mpc]" 70.0 cosmo--params) ; Hubble today km/s/Mpc
+    (puthash "omatter" 0.3 cosmo--params)        ; Matter today
+  nil)
 
 
 (defun cosmo--read-param (name)
-  "Read parameter from minibuffer and convert it to number."
+  "Read parameter NAME from minibuffer and convert it to number."
   (string-to-number (read-from-minibuffer (format "Enter %s: " name))))
 
 
-(defun cosmo--set-olambda ()
-  "Set the cosmological constant density parameter for flat LCDM."
-  (setq cosmo--olambda (- 1.0 (gethash "omatter" cosmo--params))))
-
-
 (defun cosmo--check-param (name value)
-  "Check the validity of a cosmological parameter value."
+  "Check the validity of NAME (a cosmological parameter) VALUE."
   (cond ((string= name "omatter")
          (unless (and (> value 0.0) (< value 1.0))
            (error "Error: omatter must be positive and less than 1")))))
 
 
 (defun cosmo--put-param (name)
-  "Read parameter from minibuffer and add it to the parameter table."
+  "Read parameter NAME from minibuffer and add it to the parameter table."
   (puthash name (cosmo--read-param name) cosmo--params))
 
 
@@ -79,11 +89,12 @@
 
 
 (defun cosmo--get-hubble (redshift)
-  "Compute Hubble parameter for flat ΛCDM."
+  "Compute Hubble parameter for flat ΛCDM at a given REDSHIFT."
   (let ((omatter (gethash "omatter" cosmo--params))
+        (olambda (cosmo--get-olambda))
         (H0 (gethash "H0 [Km/s/Mpc]" cosmo--params))
         (zp1 (+ 1 redshift)))
-    (* H0 (sqrt (+ (* omatter (expt zp1 3)) (- 1 omatter))))))
+    (* H0 (sqrt (+ (* omatter (expt zp1 3)) olambda)))))
 
 
 (defun cosmo-hubble ()
@@ -95,20 +106,29 @@
 
 (defun cosmo--write-calc (redshift H0 omatter hubble)
   "Format and insert cosmological table in buffer."
-  (insert "Cosmology calculator.\n\n"
-          "Input Parameters\n"
-          "----------------\n"
-          (format "- Redshift:                       \t%s\n"
-                  redshift)
-          (format "- Hubble constant, now [km/s/Mpc]:\t%s\n"
-                  H0)
-          (format "- Matter fractional density, now: \t%s\n"
-                  omatter)
-          "\n"
-          "Cosmography at required redshift\n"
-          "-------------------------------\n"
-          (format "- Hubble parameter [km/s/Mpc]:\t%s\n"
-                  hubble)))
+    ;; Input parameters
+    (insert "Cosmology calculator.\n\n"
+            "Input Parameters\n"
+            "----------------\n"
+            (format "- Redshift:                       \t%s\n"
+                    redshift)
+            (format "- Hubble constant, now [km/s/Mpc]:\t%s\n"
+                    H0)
+            (format "- Matter fractional density, now: \t%s\n"
+                    omatter)
+            "\n")
+    ;; Derived parameters
+    (insert "Derived parameters\n"
+            "------------------\n"
+            (format "- Cosmological constant fractional density: \t%s\n"
+                    (cosmo--get-olambda))
+            "\n")
+    ;; Cosmological functions
+    (insert "Cosmography at required redshift\n"
+            "--------------------------------\n"
+            (format "- Hubble parameter [km/s/Mpc]:\t%s\n"
+                    hubble))
+    nil)
 
 
 (defun cosmo-calculator ()
@@ -121,10 +141,14 @@
     (switch-to-buffer-other-window "*cosmo*")
     (erase-buffer)
     (cosmo--write-calc redshift H0 omatter hubble)
+    (beginning-of-buffer)
     (other-window 1)))
 
 
 ;; Set default values when loading the package
 (cosmo-set-default)
 
+
 (provide 'cosmo)
+
+;;; cosmo.el ends here

@@ -11,5 +11,6 @@
 # Undo-tree save-files
 *.~undo-tree
 
-# Docs temporarily exported
+# Temporariry files
 README.html
+install.sh

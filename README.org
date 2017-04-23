@@ -71,8 +71,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   Open Emacs and type =M-x cosmo-command=,[fn:1] where the =command= name
   varies depending on the desired computation. For example:
 
-  - M-x cosmo-set-params :: Set cosmological parameters.
-
   - M-x cosmo-calculator :: Compute cosmology and display summary table in
        a new buffer. The following illustrates a possible output:
        #+BEGIN_EXAMPLE
@@ -81,7 +79,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        Input Parameters
        ----------------
        - Redshift:                       	0.1
-       - Hubble constant, now [km/s/Mpc]:	70
+       - Hubble constant, now [km/s/Mpc]:	70.0
        - Matter fractional density, now: 	0.3
        <...>
 
@@ -90,6 +88,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        - Hubble parameter [km/s/Mpc]:	73.39325582095401
        <...>
        #+END_EXAMPLE
+
+  - M-x cosmo-set-params :: Change the values of cosmological parameters.
 
   A complete list of interactive commands can be obtained by typing
   =M-x cosmo- TAB=. Documentation is available through =C-h f
