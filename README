@@ -1,3 +1,5 @@
+-*- mode: org; fill-column:65 -*-
+
 #+TITLE: cosmo.el
 #+AUTHOR: Francesco Montanari
 
@@ -97,8 +99,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   command.
 
 * Support
-
-  Homepage: <http://fmnt.info/software/cosmo-el.html>.
 
   Bugs and issues are tracked through the [[https://gitlab.com/montanari/cosmo-el][git repository page]]. Please
   see [[http://www.chiark.greenend.org.uk/~sgtatham/bugs.html][this page]] about how to report bugs effectively.
