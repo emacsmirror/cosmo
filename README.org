@@ -1,4 +1,4 @@
--*- mode: org; fill-column:65 -*-
+# -*- mode: org; fill-column:65 -*-
 
 #+TITLE: cosmo.el
 #+AUTHOR: Francesco Montanari
@@ -40,6 +40,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   - redshift :: Gravitational redshift of photons frequency due to the
                 expansion of the Universe.
 
+  Definitions follow Hoggs 1999 ([[https://arxiv.org/abs/astro-ph/9905116][arXiv:astro-ph/9905116]]).
+
 * Download
 
   The source code can be downloaded from the [[https://gitlab.com/montanari/cosmo-el][git repository page]].
@@ -59,7 +61,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   cp cosmo.el ~/.emacs.d/cosmo-el
   #+END_SRC
 
-  Open your Emacs configuration file (e.g., =~\/.emacs= on GNU
+  Open your Emacs configuration file (e.g., =~/.emacs= on GNU
   systems), and add the following lines:
 
   #+BEGIN_SRC emacs-lisp
@@ -96,7 +98,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   A complete list of interactive commands can be obtained by typing
   =M-x cosmo- TAB=. Documentation is available through =C-h f
   cosmo-command=, where =command= should be adapted to the particular
-  command.
+  command. Definitions follow Hoggs 1999 ([[https://arxiv.org/abs/astro-ph/9905116][arXiv:astro-ph/9905116]]).
+
 
 * Support
 
