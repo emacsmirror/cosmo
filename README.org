@@ -40,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   - redshift :: Gravitational redshift of photons frequency due to the
                 expansion of the Universe.
 
-  Definitions follow Hoggs 1999 ([[https://arxiv.org/abs/astro-ph/9905116][arXiv:astro-ph/9905116]]).
+  Definitions follow Hoggs (1999) [[[https://arxiv.org/abs/astro-ph/9905116][arXiv:astro-ph/9905116]]].
 
 * Download
 

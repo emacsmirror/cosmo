@@ -30,12 +30,12 @@
 ;; This program provides a cosmological calculator for Lambda-CDM
 ;; cosmological models.  Such a framework describes a homogeneous and
 ;; isotropic universe containing a cosmological constant (Lambda) and
-;; a Cold Dark Matter (CDM) component, besides ordinary
-;; species.
+;; a Cold Dark Matter (CDM) component, besides ordinary species.
 ;;
 ;; Several interactive commands are provided to set the cosmological
 ;; parameters and to compute cosmological functions at given redshift
-;; values.
+;; values. Definitions follow Hoggs (1999)
+;; <https://arxiv.org/abs/astro-ph/9905116>.
 ;;
 ;;; Code:
 
@@ -46,12 +46,13 @@
     (puthash "H0 [Km/s/Mpc]" 70.0 table) ; Hubble today km/s/Mpc
     (puthash "omatter" 0.3 table)        ; Matter today
     table)
-  "Table containing LCDM cosmological parameters.")
+  "Table containing Lambda-CDM cosmological parameters.")
 
 
 ;; Derived cosmological parameter
 (defun cosmo--get-olambda ()
-  "Get cosmological constant density parameter according to flat LCDM."
+  "Get cosmological constant density parameter according to flat
+Lambda-CDM."
   (- 1. (gethash "omatter" cosmo--params)))
 
 
@@ -91,7 +92,8 @@
 
 
 (defun cosmo--get-hubble (redshift)
-  "Compute Hubble parameter for flat ΛCDM at a given REDSHIFT."
+  "Compute Hubble parameter for flat Lambda-CDM at a given
+REDSHIFT."
   (let ((omatter (gethash "omatter" cosmo--params))
         (olambda (cosmo--get-olambda))
         (H0 (gethash "H0 [Km/s/Mpc]" cosmo--params))
