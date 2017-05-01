@@ -56,6 +56,11 @@ Lambda-CDM."
   (- 1. (gethash "omatter" cosmo--params)))
 
 
+(defun cosmo--sinh (x)
+  "Hyperbolic sine of real arguments X."
+  (* 0.5 (- (exp x) (exp (- x)))))
+
+
 ;; (defun cosmo-set-default ()
 ;;   "Set cosmological parameters to the default values."
 ;;   (interactive)
