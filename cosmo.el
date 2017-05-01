@@ -40,9 +40,6 @@
 ;;; Code:
 
 
-(require 'subr-x)
-
-
 ;; Hash table containing all independent cosmological parameters
 (defvar cosmo--params
   (let ((table (make-hash-table :test 'equal)))
@@ -72,6 +69,11 @@
   (string-to-number (read-from-minibuffer (format "Enter %s: " name))))
 
 
+(defun cosmo--put-param (name)
+  "Read parameter NAME from minibuffer and add it to the parameter table."
+  (puthash name (cosmo--read-param name) cosmo--params))
+
+
 (defun cosmo--check-param (name value)
   "Check the validity of NAME (a cosmological parameter) VALUE."
   (cond ((string= name "omatter")
@@ -79,18 +81,13 @@
            (error "Error: omatter must be positive and less than 1")))))
 
 
-(defun cosmo--put-param (name)
-  "Read parameter NAME from minibuffer and add it to the parameter table."
-  (puthash name (cosmo--read-param name) cosmo--params))
-
-
 (defun cosmo-set-params ()
   "Change the values of cosmological parameters."
   (interactive)
-  (let ((params (hash-table-keys cosmo--params)))
-    (dolist (param params)
-      (cosmo--put-param param)
-      (cosmo--check-param param (gethash param cosmo--params)))))
+  (maphash (lambda (key value)
+             (cosmo--put-param key)
+             (cosmo--check-param key (gethash key cosmo--params)))
+           cosmo--params))
 
 
 (defun cosmo--get-hubble (redshift)
@@ -99,7 +96,7 @@
         (olambda (cosmo--get-olambda))
         (H0 (gethash "H0 [Km/s/Mpc]" cosmo--params))
         (zp1 (+ 1 redshift)))
-    (* H0 (sqrt (+ (* omatter (expt zp1 3)) olambda)))))
+    (* H0 (sqrt (+ (* omatter (expt zp1 3.0)) olambda)))))
 
 
 (defun cosmo-hubble ()
@@ -117,26 +114,26 @@ Argument OMATTER matter density parameter.
 Argument HUBBLE Hubble parameter at given redshift."
   ;; Input parameters
   (insert "Cosmology calculator.\n\n"
-	  "Input Parameters\n"
-	  "----------------\n"
-	  (format "- Redshift:                       \t%s\n"
-		  redshift)
-	  (format "- Hubble constant, now [km/s/Mpc]:\t%s\n"
-		  H0)
-	  (format "- Matter fractional density, now: \t%s\n"
-		  omatter)
-	  "\n")
+          "Input Parameters\n"
+          "----------------\n"
+          (format "- Redshift:                       \t%s\n"
+                  redshift)
+          (format "- Hubble constant, now [km/s/Mpc]:\t%s\n"
+                  H0)
+          (format "- Matter fractional density, now: \t%s\n"
+                  omatter)
+          "\n")
   ;; Derived parameters
   (insert "Derived parameters\n"
-	  "------------------\n"
-	  (format "- Cosmological constant fractional density: \t%s\n"
-		  (cosmo--get-olambda))
-	  "\n")
+          "------------------\n"
+          (format "- Cosmological constant fractional density: \t%s\n"
+                  (cosmo--get-olambda))
+          "\n")
   ;; Cosmological functions
   (insert "Cosmography at required redshift\n"
-	  "--------------------------------\n"
-	  (format "- Hubble parameter [km/s/Mpc]:\t%s\n"
-		  hubble))
+          "--------------------------------\n"
+          (format "- Hubble parameter [km/s/Mpc]:\t%s\n"
+                  hubble))
   nil)
 
 
