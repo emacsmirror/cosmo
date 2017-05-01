@@ -1,4 +1,4 @@
-;;; cosmo.el --- Cosmological Calculator
+;;; cosmo.el --- Cosmological Calculator    -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (C) 2017 Francesco Montanari
 ;;
@@ -34,7 +34,7 @@
 ;;
 ;; Several interactive commands are provided to set the cosmological
 ;; parameters and to compute cosmological functions at given redshift
-;; values. Definitions follow Hoggs (1999)
+;; values.  Definitions follow Hoggs (1999)
 ;; <https://arxiv.org/abs/astro-ph/9905116>.
 ;;
 ;;; Code:
@@ -51,14 +51,33 @@
 
 ;; Derived cosmological parameter
 (defun cosmo--get-olambda ()
-  "Get cosmological constant density parameter according to flat
-Lambda-CDM."
+  "Get cosmological constant density parameter according to flat Lambda-CDM."
+
   (- 1. (gethash "omatter" cosmo--params)))
 
 
 (defun cosmo--sinh (x)
   "Hyperbolic sine of real arguments X."
   (* 0.5 (- (exp x) (exp (- x)))))
+
+
+(defun cosmo--trapz (func a b &optional nstep)
+  "Trapezoidal rule.
+
+Integrate a function FUNC of one argument from A to B in NSTEP
+equally spaced steps.
+
+Example:
+\(cosmo--trapz '\(lambda \(x\) x\) 0.0 1.0\)"
+  (let* ((nstep (or nstep 50))
+         (step (/ (- b a) nstep))
+         (suml (list)))
+    (add-to-list 'suml (* 0.5 (funcall func a)))
+    (dotimes (i (- nstep 1))
+      (add-to-list 'suml
+                   (funcall func (+ a (* step (+ i 1.0))))))
+    (add-to-list 'suml (* 0.5 (funcall func b)))
+    (* step (apply '+ suml))))
 
 
 ;; (defun cosmo-set-default ()
@@ -97,8 +116,7 @@ Lambda-CDM."
 
 
 (defun cosmo--get-hubble (redshift)
-  "Compute Hubble parameter for flat Lambda-CDM at a given
-REDSHIFT."
+  "Hubble parameter for flat Lambda-CDM at a given REDSHIFT."
   (let ((omatter (gethash "omatter" cosmo--params))
         (olambda (cosmo--get-olambda))
         (H0 (gethash "H0 [Km/s/Mpc]" cosmo--params))
