@@ -7,7 +7,7 @@
 ;; Created: 22 April 2017
 (defconst cosmo:version "0.1") ;; Version:
 ;; Keywords: tools
-;; Homepage: http://fmnt.info/software/cosmo_el.html
+;; Homepage: https://gitlab.com/montanari/cosmo-el/
 ;;
 ;; This file is not part of GNU Emacs.
 ;;
@@ -32,7 +32,7 @@
 ;; isotropic universe containing a cosmological constant (Lambda) and
 ;; a Cold Dark Matter (CDM) component, besides ordinary species.
 ;;
-;; Several interactive commands are provided to set the cosmological
+;; Interactive commands are provided to set the cosmological
 ;; parameters and to compute cosmological functions at given redshift
 ;; values. Definitions follow Hoggs (1999)
 ;; <https://arxiv.org/abs/astro-ph/9905116>.
