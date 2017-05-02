@@ -65,20 +65,24 @@
   "Trapezoidal rule.
 
 Integrate a function FUNC of one argument from A to B in NSTEP
-equally spaced steps.
+equally spaced steps. The values A and B will be considered as
+float.
 
 Example:
 \(cosmo--trapz '\(lambda \(x\) x\) 0.0 1.0\)"
-  (let* ((nstep (or nstep 50))
+  (let* ((a (float a))                  ; Extremes must be floats
+         (b (float b))
+         (nstep (or nstep 50))
          (step (/ (- b a) nstep))
-         (suml (list)))
-    (add-to-list 'suml (* 0.5 (funcall func a)))
+         (sumli (list)))                ; Save addends in a list
+    (push (* 0.5 (funcall func a)) sumli)
+    (push (* 0.5 (funcall func b)) sumli)
     (dotimes (i (- nstep 1))
-      (add-to-list 'suml
-                   (funcall func (+ a (* step (+ i 1.0))))))
-    (add-to-list 'suml (* 0.5 (funcall func b)))
-    (* step (apply '+ suml))))
+      (push (funcall func (+ a (* step (1+ i)))) sumli))
+    (* step (apply '+ sumli))           ; Sum all the list addends
+    ))
 
+(cosmo--trapz '(lambda (x) x) 0 1)
 
 ;; (defun cosmo-set-default ()
 ;;   "Set cosmological parameters to the default values."
