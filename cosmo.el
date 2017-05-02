@@ -61,6 +61,28 @@
   (* 0.5 (- (exp x) (exp (- x)))))
 
 
+;; (defun cosmo--trapz (func a b &optional nstep)
+;;   "Trapezoidal rule.
+
+;; Integrate a function FUNC of one argument from A to B in NSTEP
+;; equally spaced steps. The values A and B will be considered as
+;; float.
+
+;; Example:
+;; \(cosmo--trapz '\(lambda \(x\) x\) 0.0 1.0\)"
+;;   (let* ((a (float a))                  ; Extremes must be floats
+;;          (b (float b))
+;;          (nstep (or nstep 50))
+;;          (step (/ (- b a) nstep))
+;;          (sumli (list)))                ; Save addends in a list
+;;     (push (* 0.5 (funcall func a)) sumli)
+;;     (push (* 0.5 (funcall func b)) sumli)
+;;     (dotimes (i (- nstep 1))
+;;       (push (funcall func (+ a (* step (1+ i)))) sumli))
+;;     (* step (apply '+ sumli))           ; Sum all the list addends
+;;     ))
+
+
 (defun cosmo--trapz (func a b &optional nstep)
   "Trapezoidal rule.
 
@@ -74,15 +96,13 @@ Example:
          (b (float b))
          (nstep (or nstep 50))
          (step (/ (- b a) nstep))
-         (sumli (list)))                ; Save addends in a list
-    (push (* 0.5 (funcall func a)) sumli)
-    (push (* 0.5 (funcall func b)) sumli)
+         (sum 0.0))
+    (setq sum (+ sum (* 0.5 (funcall func a))))
     (dotimes (i (- nstep 1))
-      (push (funcall func (+ a (* step (1+ i)))) sumli))
-    (* step (apply '+ sumli))           ; Sum all the list addends
-    ))
+      (setq sum (+ sum (funcall func (+ a (* step (1+ i)))))))
+    (setq sum (+ sum (* 0.5 (funcall func b))))
+    (* step sum)))
 
-(cosmo--trapz '(lambda (x) x) 0 1)
 
 ;; (defun cosmo-set-default ()
 ;;   "Set cosmological parameters to the default values."
