@@ -50,18 +50,10 @@
 
 
 ;; Derived cosmological parameter
-(defvar cosmo--olambda nil
-  "Cosmological constant density parameter.")
+(defun cosmo--get-olambda ()
+  "Get cosmological constant density parameter according to flat Lambda-CDM."
 
-
-;; Set derived parameters using closures. Calling
-;; (funcall cosmo--olambda)
-;; will return the value consistent with the
-;; particular cosmology.
-(let ((olambda 0.0))                    ; olamdba is lexically bound.
-  (setq cosmo--olambda
-        (lambda () (setq olambda (- 1.0 (gethash "omatter"
-                                                 cosmo--params))))))
+  (- 1. (gethash "omatter" cosmo--params)))
 
 
 (defun cosmo--sinh (x)
@@ -69,12 +61,34 @@
   (* 0.5 (- (exp x) (exp (- x)))))
 
 
+;; (defun cosmo--trapz (func a b &optional nstep)
+;;   "Trapezoidal rule.
+
+;; Integrate a function FUNC of one argument from A to B in NSTEP
+;; equally spaced steps. The values A and B will be considered as
+;; float.
+
+;; Example:
+;; \(cosmo--trapz '\(lambda \(x\) x\) 0.0 1.0\)"
+;;   (let* ((a (float a))                  ; Extremes must be floats
+;;          (b (float b))
+;;          (nstep (or nstep 50))
+;;          (step (/ (- b a) nstep))
+;;          (sumli (list)))                ; Save addends in a list
+;;     (push (* 0.5 (funcall func a)) sumli)
+;;     (push (* 0.5 (funcall func b)) sumli)
+;;     (dotimes (i (- nstep 1))
+;;       (push (funcall func (+ a (* step (1+ i)))) sumli))
+;;     (* step (apply '+ sumli))           ; Sum all the list addends
+;;     ))
+
+
 (defun cosmo--trapz (func a b &optional nstep)
   "Trapezoidal rule.
 
 Integrate a function FUNC of one argument from A to B in NSTEP
 equally spaced steps. The values A and B will be considered as
-floats.
+float.
 
 Example:
 \(cosmo--trapz '\(lambda \(x\) x\) 0.0 1.0\)"
@@ -128,7 +142,7 @@ Example:
 (defun cosmo--get-hubble (redshift)
   "Hubble parameter for flat Lambda-CDM at a given REDSHIFT."
   (let ((omatter (gethash "omatter" cosmo--params))
-        (olambda (funcall cosmo--olambda))
+        (olambda (cosmo--get-olambda))
         (H0 (gethash "H0 [Km/s/Mpc]" cosmo--params))
         (zp1 (+ 1 redshift)))
     (* H0 (sqrt (+ (* omatter (expt zp1 3.0)) olambda)))))
@@ -162,7 +176,7 @@ Argument HUBBLE Hubble parameter at given redshift."
   (insert "Derived parameters\n"
           "------------------\n"
           (format "- Cosmological constant fractional density: \t%s\n"
-                  (funcall cosmo--olambda))
+                  (cosmo--get-olambda))
           "\n")
   ;; Cosmological functions
   (insert "Cosmography at required redshift\n"
