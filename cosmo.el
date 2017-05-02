@@ -54,14 +54,15 @@
   "Cosmological constant density parameter.")
 
 
-;; Set derived parameters using closures. They will be updated
-;; correctly when changing cosmology, no need to set them each
-;; time. Just call:
+;; Set derived parameters using closures. Calling
 ;; (funcall cosmo--olambda)
-(let ((olambda 0))                      ; olamdba is lexically bound.
+;; will return the value consistent with the
+;; particular cosmology.
+(let ((olambda 0.0))                    ; olamdba is lexically bound.
   (setq cosmo--olambda
         (lambda () (setq olambda (- 1.0 (gethash "omatter"
                                                  cosmo--params))))))
+
 
 (defun cosmo--sinh (x)
   "Hyperbolic sine of real arguments X."
