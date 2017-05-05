@@ -51,36 +51,14 @@
 
 ;; Derived cosmological parameter
 (defun cosmo--get-olambda ()
-  "Get cosmological constant density parameter according to flat Lambda-CDM."
-
+  "Get cosmological constant density parameter according to flat
+Lambda-CDM."
   (- 1. (gethash "omatter" cosmo--params)))
 
 
 (defun cosmo--sinh (x)
   "Hyperbolic sine of real arguments X."
   (* 0.5 (- (exp x) (exp (- x)))))
-
-
-;; (defun cosmo--trapz (func a b &optional nstep)
-;;   "Trapezoidal rule.
-
-;; Integrate a function FUNC of one argument from A to B in NSTEP
-;; equally spaced steps. The values A and B will be considered as
-;; float.
-
-;; Example:
-;; \(cosmo--trapz '\(lambda \(x\) x\) 0.0 1.0\)"
-;;   (let* ((a (float a))                  ; Extremes must be floats
-;;          (b (float b))
-;;          (nstep (or nstep 50))
-;;          (step (/ (- b a) nstep))
-;;          (sumli (list)))                ; Save addends in a list
-;;     (push (* 0.5 (funcall func a)) sumli)
-;;     (push (* 0.5 (funcall func b)) sumli)
-;;     (dotimes (i (- nstep 1))
-;;       (push (funcall func (+ a (* step (1+ i)))) sumli))
-;;     (* step (apply '+ sumli))           ; Sum all the list addends
-;;     ))
 
 
 (defun cosmo--trapz (func a b &optional nstep)
@@ -119,7 +97,8 @@ Example:
 
 
 (defun cosmo--put-param (name)
-  "Read parameter NAME from minibuffer and add it to the parameter table."
+  "Read parameter NAME from minibuffer and add it to the
+parameter table."
   (puthash name (cosmo--read-param name) cosmo--params))
 
 
