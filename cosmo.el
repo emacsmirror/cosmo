@@ -158,10 +158,11 @@ Example:
 (defun cosmo--write-calc-header ()
   "Write header for the cosmological calculator summary buffer."
   (let ((head "Cosmology calculator.\n\n")
-        (help "(SPACE to scroll-down, BACKSPACE to scroll-up, `q` to quit.)\n\n"))
+        (help (concat "(SPACE to scroll-down, BACKSPACE to scroll-up, "
+                      "`q` to quit.)\n\n")))
     (insert (propertize help 'font-lock-face 'italic))
     (insert head)))
-
+(concat "a" "b")
 
 (defun cosmo--write-calc (redshift H0 omatter hubble)
   "Format and insert cosmological table in buffer.
@@ -210,5 +211,6 @@ Argument HUBBLE Hubble parameter at given redshift."
 
 
 (provide 'cosmo)
+
 
 ;;; cosmo.el ends here
