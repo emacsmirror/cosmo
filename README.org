@@ -73,10 +73,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 * Usage
 
   Open Emacs and type =M-x cosmo-command=,[fn:1] where the =command= name
-  varies depending on the desired computation. For example:
+  varies depending on the desired computation:
 
-  - M-x cosmo-calculator :: Compute cosmology and display summary table in
-       a new buffer. The following illustrates a possible output:
+  # List all interactive commands:
+  #   (apropos-command "cosmo-")
+  #
+  - cosmo-calculator :: Compute cosmology and display summary
+       table in a new buffer. The following illustrates a
+       possible output (inspired by Gnuastro astcosmiccal
+       program):
        #+BEGIN_EXAMPLE
        Cosmology calculator.
 
@@ -93,13 +98,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        <...>
        #+END_EXAMPLE
 
-  - M-x cosmo-set-params :: Change the values of cosmological parameters.
+  - cosmo-hubble :: Display Hubble parameter in mini-buffer.
+
+  - cosmo-set-params :: Change the values of cosmological parameters.
 
   A complete list of interactive commands can be obtained by typing
   =M-x cosmo- TAB=. Documentation is available through =C-h f
   cosmo-command=, where =command= should be adapted to the particular
   command. Definitions follow Hoggs 1999 ([[https://arxiv.org/abs/astro-ph/9905116][arXiv:astro-ph/9905116]]).
-
 
 * Support
 

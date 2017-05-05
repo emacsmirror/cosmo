@@ -155,6 +155,14 @@ Example:
     (message (format "%s km/s/Mpc" (cosmo--get-hubble z)))))
 
 
+(defun cosmo--write-calc-header ()
+  "Write header for the cosmological calculator summary buffer."
+  (let ((head "Cosmology calculator.\n\n")
+        (help "(SPACE to scroll-down, BACKSPACE to scroll-up, `q` to quit.)\n\n"))
+    (insert (propertize help 'font-lock-face 'italic))
+    (insert head)))
+
+
 (defun cosmo--write-calc (redshift H0 omatter hubble)
   "Format and insert cosmological table in buffer.
 Argument REDSHIFT redshift.
@@ -162,8 +170,8 @@ Argument H0 Hubble parameter today.
 Argument OMATTER matter density parameter.
 Argument HUBBLE Hubble parameter at given redshift."
   ;; Input parameters
-  (insert "Cosmology calculator.\n\n"
-          "Input Parameters\n"
+  (cosmo--write-calc-header)
+  (insert "Input Parameters\n"
           "----------------\n"
           (format "- Redshift:                       \t%s\n"
                   redshift)
@@ -197,7 +205,8 @@ Argument HUBBLE Hubble parameter at given redshift."
     (erase-buffer)
     (cosmo--write-calc redshift H0 omatter hubble)
     (beginning-of-buffer)
-    (other-window 1)))
+    ;; (other-window 1)
+    (special-mode)))
 
 
 (provide 'cosmo)
