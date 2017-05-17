@@ -45,15 +45,19 @@
   (let ((table (make-hash-table :test 'equal)))
     (puthash "H0 [Km/s/Mpc]" 70.0 table) ; Hubble today km/s/Mpc
     (puthash "omatter" 0.3 table)        ; Matter today
+    (puthash "olambda" 0.7 table)        ; Curvature today
+    (puthash "oradiation" 0.0 table)     ; Radiation today
     table)
   "Table containing Lambda-CDM cosmological parameters.")
 
 
 ;; Derived cosmological parameter
-(defun cosmo--get-olambda ()
-  "Get cosmological constant density parameter according to flat
-Lambda-CDM."
-  (- 1. (gethash "omatter" cosmo--params)))
+(defun cosmo--get-ocurvature ()
+  "Get curvature density parameter today from Friedmann equations."
+  (let ((omatter (gethash "omatter" cosmo--params))
+        (olambda (gethash "olambda" cosmo--params))
+        (oradiation (gethash "oradiation" cosmo--params)))
+    (- 1.0 omatter olambda oradiation)))
 
 
 (defun cosmo--sinh (x)
@@ -104,9 +108,12 @@ parameter table."
 
 (defun cosmo--check-param (name value)
   "Check the validity of NAME (a cosmological parameter) VALUE."
-  (cond ((string= name "omatter")
-         (unless (and (> value 0.0) (< value 1.0))
-           (error "Error: omatter must be positive and less than 1")))))
+  ;; (unless (numberp value) (error "Error: parameter must be a number"))
+  (cond ((or (string= name "omatter")
+	     (string= name "olambda")
+	     (string= name "oradiation"))
+         (unless (> value 0.0)
+           (error "Error: density parameter must be positive")))))
 
 
 (defun cosmo-set-params ()
@@ -118,13 +125,24 @@ parameter table."
            cosmo--params))
 
 
-(defun cosmo--get-hubble (redshift)
-  "Hubble parameter for flat Lambda-CDM at a given REDSHIFT."
+(defun cosmo--efunc (redshift)
+  "E(z) function at a given REDSHIFT."
   (let ((omatter (gethash "omatter" cosmo--params))
-        (olambda (cosmo--get-olambda))
-        (H0 (gethash "H0 [Km/s/Mpc]" cosmo--params))
+        (olambda (gethash "olambda" cosmo--params))
+        (oradiation (gethash "oradiation" cosmo--params))
+        (ocurvature (cosmo--get-ocurvature))
         (zp1 (+ 1 redshift)))
-    (* H0 (sqrt (+ (* omatter (expt zp1 3.0)) olambda)))))
+    (sqrt (+ (* oradiation (expt zp1 4.0))
+             (* omatter (expt zp1 3.0))
+             (* ocurvature (expt zp1 2.0))
+             olambda))))
+
+
+(defun cosmo--get-hubble (redshift)
+  "Hubble parameter for Lambda-CDM at a given REDSHIFT."
+  (let ((H0 (gethash "H0 [Km/s/Mpc]" cosmo--params))
+        (zp1 (+ 1 redshift)))
+    (* H0 (cosmo--efunc redshift))))
 
 
 (defun cosmo-hubble ()
@@ -139,37 +157,43 @@ parameter table."
   (let ((head "Cosmology calculator.\n\n")
         (help (concat "(SPACE to scroll-down, BACKSPACE to scroll-up, "
                       "`q` to quit.)\n\n")))
-    (insert (propertize help 'font-lock-face 'italic))
+    ;; (insert (propertize help 'font-lock-face 'italic))
     (insert head)))
-(concat "a" "b")
 
-(defun cosmo--write-calc (redshift H0 omatter hubble)
+
+(defun cosmo--write-calc (redshift H0 omatter olambda oradiation hubble)
   "Format and insert cosmological table in buffer.
 Argument REDSHIFT redshift.
 Argument H0 Hubble parameter today.
 Argument OMATTER matter density parameter.
+Argument OLAMBDA cosmological constant density parameter.
+Argument ORADIATION density parameter.
 Argument HUBBLE Hubble parameter at given redshift."
   ;; Input parameters
   (cosmo--write-calc-header)
   (insert "Input Parameters\n"
           "----------------\n"
-          (format "- Redshift:                       \t%s\n"
+          (format "- Redshift:                                 %s\n"
                   redshift)
-          (format "- Hubble constant, now [km/s/Mpc]:\t%s\n"
+          (format "- Hubble constant, now [km/s/Mpc]:          %s\n"
                   H0)
-          (format "- Matter fractional density, now: \t%s\n"
+          (format "- Matter fractional density, now:           %s\n"
                   omatter)
+          (format "- Cosmological constant fractional density: %s\n"
+                  olambda)
+          (format "- Radiation fractional density, now:        %s\n"
+                  oradiation)
           "\n")
   ;; Derived parameters
   (insert "Derived parameters\n"
           "------------------\n"
-          (format "- Cosmological constant fractional density: \t%s\n"
-                  (cosmo--get-olambda))
+          (format "- Curvature fractional density: %s\n"
+                  (cosmo--get-ocurvature))
           "\n")
   ;; Cosmological functions
   (insert "Cosmography at required redshift\n"
           "--------------------------------\n"
-          (format "- Hubble parameter [km/s/Mpc]:\t%s\n"
+          (format "- Hubble parameter [km/s/Mpc]: %s\n"
                   hubble))
   nil)
 
@@ -179,14 +203,17 @@ Argument HUBBLE Hubble parameter at given redshift."
   (interactive)
   (let* ((redshift (cosmo--read-param "redshift"))
          (omatter (gethash "omatter" cosmo--params))
+         (olambda (gethash "olambda" cosmo--params))
+         (oradiation (gethash "oradiation" cosmo--params))
          (H0 (gethash "H0 [Km/s/Mpc]" cosmo--params))
          (hubble (cosmo--get-hubble redshift)))
     (switch-to-buffer-other-window "*cosmo*")
     (erase-buffer)
-    (cosmo--write-calc redshift H0 omatter hubble)
+    (cosmo--write-calc redshift H0 omatter olambda oradiation hubble)
     (beginning-of-buffer)
-    ;; (other-window 1)
-    (special-mode)))
+    ;; (special-mode) ; Problem: the buffer won't update, it must be
+    ;;                ; killed.
+    (other-window 1)))
 
 
 (provide 'cosmo)
