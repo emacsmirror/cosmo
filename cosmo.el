@@ -188,13 +188,36 @@ given REDSHIFT."
     (message (format "%s Mpc" (cosmo--get-los-comoving-distance z)))))
 
 
+(defun cosmo--get-transverse-comoving-distance (redshift)
+  "Line-of-sight comoving distance [Mpc] for Lambda-CDM at a
+given REDSHIFT."
+  (let* ((DH (cosmo--get-hubble-distance))
+         (DC (cosmo--get-los-comoving-distance redshift))
+         (ocurvature (cosmo--get-ocurvature))
+         (sqrt-ok (sqrt (abs (cosmo--get-ocurvature))))
+         (DH-over-sqrtok (/ DH sqrt-ok)))
+    (cond ((> ocurvature 0)
+           (* DH-over-sqrtok (cosmo--sinh (/ DC DH-over-sqrtok))))
+          ((= ocurvature 0)
+           DC)
+          ((< ocurvature 0)
+           (* DH-over-sqrtok (sin (/ DC DH-over-sqrtok)))))))
+
+
+(defun cosmo-transverse-comoving-distance ()
+  "Display transverse comoving distance in mini-buffer."
+  (interactive)
+  (let ((z (cosmo--read-param "redshift")))
+    (message (format "%s Mpc"
+                     (cosmo--get-transverse-comoving-distance z)))))
+
+
 ;; Write output
 (defun cosmo--write-calc-header ()
   "Write header for the cosmological calculator summary buffer."
   (let ((head "Cosmology calculator.\n\n")
-        (help (concat "(SPACE to scroll-down, BACKSPACE to scroll-up, "
-                      "`q` to quit.)\n\n")))
-    ;; (insert (propertize help 'font-lock-face 'italic))
+        (help "(`C-x o` to change buffer)\n\n"))       ; TBD: Remove help?
+    (insert (propertize help 'font-lock-face 'italic)) ; TBD: Fix italic.
     (insert head)))
 
 
