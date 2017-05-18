@@ -40,7 +40,7 @@
 ;;; Code:
 
 
-;; Define cosmological parameters.
+;;; Define cosmological parameters.
 
 ;; Hash table containing all independent cosmological parameters.
 (defvar cosmo--params
@@ -54,6 +54,7 @@
 
 
 ;; Derived cosmological parameter.
+
 (defun cosmo--get-ocurvature ()
   "Get curvature density parameter today from Friedmann equations."
   (let ((omatter (gethash "omatter" cosmo--params))
@@ -62,15 +63,15 @@
     (- 1.0 omatter olambda oradiation)))
 
 
-;; Read parameters.
+;;; Handle input.
+
 (defun cosmo--read-param (name)
   "Read parameter NAME from minibuffer and convert it to number."
   (string-to-number (read-from-minibuffer (format "Enter %s: " name))))
 
 
 (defun cosmo--put-param (name)
-  "Read parameter NAME from minibuffer and add it to the
-parameter table."
+  "Read parameter NAME from minibuffer and add it to the parameter table."
   (puthash name (cosmo--read-param name) cosmo--params))
 
 
@@ -101,7 +102,7 @@ parameter table."
 ;;   nil)
 
 
-;; Numerical utilities.
+;;; Numerical utilities.
 
 (defun cosmo--sinh (x)
   "Hyperbolic sine of real arguments X."
@@ -112,7 +113,7 @@ parameter table."
   "Trapezoidal rule.
 
 Integrate a function FUNC of one argument from A to B in NSTEP
-equally spaced steps. The values A and B will be considered as
+equally spaced steps.  The values A and B will be considered as
 float.
 
 Example:
@@ -129,7 +130,7 @@ Example:
     (* step sum)))
 
 
-;; Compute cosmological functions.
+;;; Compute cosmological functions.
 
 (defun cosmo--efunc (redshift)
   "E(z) function at a given REDSHIFT."
@@ -150,8 +151,7 @@ Example:
 
 
 (defun cosmo--get-hubble (redshift)
-  "Hubble parameter [Km/s/Mpc] for Lambda-CDM at a given
-REDSHIFT."
+  "Hubble parameter [Km/s/Mpc] for Lambda-CDM at a given REDSHIFT."
   (let ((H0 (gethash "H0 [Km/s/Mpc]" cosmo--params))
         (zp1 (+ 1 redshift)))
     (* H0 (cosmo--efunc redshift))))
@@ -177,8 +177,7 @@ REDSHIFT."
 
 
 (defun cosmo--get-los-comoving-distance (redshift)
-  "Line-of-sight comoving distance [Mpc] for Lambda-CDM at a
-given REDSHIFT."
+  "Line-of-sight comoving distance [Mpc] for Lambda-CDM at a given REDSHIFT."
   (let ((DH (cosmo--get-hubble-distance))
         (int (cosmo--trapz #'cosmo--inv-efunc 0.0 redshift)))
     (* DH int)))
@@ -192,8 +191,7 @@ given REDSHIFT."
 
 
 (defun cosmo--get-transverse-comoving-distance (redshift)
-  "Line-of-sight comoving distance [Mpc] for Lambda-CDM at a
-given REDSHIFT."
+  "Line-of-sight comoving distance [Mpc] for Lambda-CDM at a given REDSHIFT."
   (let* ((DH (cosmo--get-hubble-distance))
          (DC (cosmo--get-los-comoving-distance redshift))
          (ocurvature (cosmo--get-ocurvature))
@@ -215,13 +213,15 @@ given REDSHIFT."
                      (cosmo--get-transverse-comoving-distance z)))))
 
 
-;; Write output.
+;;; Handle output.
 
 (defun cosmo--write-calc-header ()
   "Write header for the cosmological calculator summary buffer."
   (let ((head "Cosmology calculator.\n\n")
-        (help "(`C-x o` to change buffer)\n\n"))       ; TBD: Remove help?
-    (insert (propertize help 'font-lock-face 'italic)) ; TBD: Fix italic.
+        (help "(`C-x o` to change buffer)\n\n")) ; TODO: Remove help?
+
+    (insert (propertize help 'font-lock-face 'italic)) ; TODO: Fix italic.
+
     (insert head)))
 
 
