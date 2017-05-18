@@ -162,15 +162,15 @@ REDSHIFT."
 
 
 (defun cosmo--get-hubble-distance ()
-  "Hubble distance [1/Mpc] for Lambda-CDM."
+  "Hubble distance 1/H0 [Mpc] for Lambda-CDM."
   (let ((H0 (gethash "H0 [Km/s/Mpc]" cosmo--params)))
     (/ 3.0e5 H0)))
 
 
-;; (defun cosmo-hubble-distance ()
-;;   "Display Hubble parameter in mini-buffer."
-;;   (interactive)
-;;   (message (format "%s 1/Mpc" (cosmo--get-hubble-distance))))
+(defun cosmo-hubble-distance ()
+  "Display Hubble distance 1/H0 [Mpc] in mini-buffer."
+  (interactive)
+  (message (format "%s Mpc" (cosmo--get-hubble-distance))))
 
 
 (defun cosmo--get-los-comoving-distance (redshift)
