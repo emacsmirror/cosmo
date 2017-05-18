@@ -40,7 +40,9 @@
 ;;; Code:
 
 
-;; Hash table containing all independent cosmological parameters
+;; Define cosmological parameters.
+
+;; Hash table containing all independent cosmological parameters.
 (defvar cosmo--params
   (let ((table (make-hash-table :test 'equal)))
     (puthash "H0 [Km/s/Mpc]" 70.0 table) ; Hubble today km/s/Mpc
@@ -51,7 +53,7 @@
   "Table containing Lambda-CDM cosmological parameters.")
 
 
-;; Derived cosmological parameter
+;; Derived cosmological parameter.
 (defun cosmo--get-ocurvature ()
   "Get curvature density parameter today from Friedmann equations."
   (let ((omatter (gethash "omatter" cosmo--params))
@@ -60,34 +62,7 @@
     (- 1.0 omatter olambda oradiation)))
 
 
-;; Numerical utilities
-(defun cosmo--sinh (x)
-  "Hyperbolic sine of real arguments X."
-  (* 0.5 (- (exp x) (exp (- x)))))
-
-
-(defun cosmo--trapz (func a b &optional nstep)
-  "Trapezoidal rule.
-
-Integrate a function FUNC of one argument from A to B in NSTEP
-equally spaced steps. The values A and B will be considered as
-float.
-
-Example:
-\(cosmo--trapz '\(lambda \(x\) x\) 0.0 1.0\)"
-  (let* ((a (float a))                  ; Extremes must be floats
-         (b (float b))
-         (nstep (or nstep 50))
-         (step (/ (- b a) nstep))
-         (sum 0.0))
-    (setq sum (+ sum (* 0.5 (funcall func a))))
-    (dotimes (i (- nstep 1))
-      (setq sum (+ sum (funcall func (+ a (* step (1+ i)))))))
-    (setq sum (+ sum (* 0.5 (funcall func b))))
-    (* step sum)))
-
-
-;; Read parameters
+;; Read parameters.
 (defun cosmo--read-param (name)
   "Read parameter NAME from minibuffer and convert it to number."
   (string-to-number (read-from-minibuffer (format "Enter %s: " name))))
@@ -126,7 +101,36 @@ parameter table."
 ;;   nil)
 
 
-;; Compute cosmological functions
+;; Numerical utilities.
+
+(defun cosmo--sinh (x)
+  "Hyperbolic sine of real arguments X."
+  (* 0.5 (- (exp x) (exp (- x)))))
+
+
+(defun cosmo--trapz (func a b &optional nstep)
+  "Trapezoidal rule.
+
+Integrate a function FUNC of one argument from A to B in NSTEP
+equally spaced steps. The values A and B will be considered as
+float.
+
+Example:
+\(cosmo--trapz '\(lambda \(x\) x\) 0.0 1.0\)"
+  (let* ((a (float a))                  ; Extremes must be floats.
+         (b (float b))
+         (nstep (or nstep 50))
+         (step (/ (- b a) nstep))
+         (sum 0.0))
+    (setq sum (+ sum (* 0.5 (funcall func a))))
+    (dotimes (i (- nstep 1))
+      (setq sum (+ sum (funcall func (+ a (* step (1+ i)))))))
+    (setq sum (+ sum (* 0.5 (funcall func b))))
+    (* step sum)))
+
+
+;; Compute cosmological functions.
+
 (defun cosmo--efunc (redshift)
   "E(z) function at a given REDSHIFT."
   (let ((omatter (gethash "omatter" cosmo--params))
@@ -140,7 +144,6 @@ parameter table."
              olambda))))
 
 
-;; Compute cosmological functions
 (defun cosmo--inv-efunc (redshift)
   "Inverse E(z) function at a given REDSHIFT."
   (cosmo--efunc redshift))
@@ -212,7 +215,8 @@ given REDSHIFT."
                      (cosmo--get-transverse-comoving-distance z)))))
 
 
-;; Write output
+;; Write output.
+
 (defun cosmo--write-calc-header ()
   "Write header for the cosmological calculator summary buffer."
   (let ((head "Cosmology calculator.\n\n")
@@ -229,7 +233,7 @@ Argument OMATTER matter density parameter.
 Argument OLAMBDA cosmological constant density parameter.
 Argument ORADIATION density parameter.
 Argument HUBBLE Hubble parameter at given redshift."
-  ;; Input parameters
+  ;; Input parameters.
   (cosmo--write-calc-header)
   (insert "Input Parameters\n"
           "----------------\n"
@@ -244,13 +248,13 @@ Argument HUBBLE Hubble parameter at given redshift."
           (format "- Radiation fractional density, now:        %s\n"
                   oradiation)
           "\n")
-  ;; Derived parameters
+  ;; Derived parameters.
   (insert "Derived parameters\n"
           "------------------\n"
           (format "- Curvature fractional density: %s\n"
                   (cosmo--get-ocurvature))
           "\n")
-  ;; Cosmological functions
+  ;; Cosmological functions.
   (insert "Cosmography at required redshift\n"
           "--------------------------------\n"
           (format "- Hubble parameter [km/s/Mpc]: %s\n"
@@ -277,6 +281,5 @@ Argument HUBBLE Hubble parameter at given redshift."
 
 
 (provide 'cosmo)
-
 
 ;;; cosmo.el ends here
