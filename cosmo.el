@@ -116,7 +116,7 @@ equally spaced steps. The values A and B will be considered as
 float.
 
 Example:
-\(cosmo--trapz '\(lambda \(x\) x\) 0.0 1.0\)"
+\(cosmo--trapz #'\(lambda \(x\) x\) 0.0 1.0\)"
   (let* ((a (float a))                  ; Extremes must be floats.
          (b (float b))
          (nstep (or nstep 50))
@@ -180,7 +180,7 @@ REDSHIFT."
   "Line-of-sight comoving distance [Mpc] for Lambda-CDM at a
 given REDSHIFT."
   (let ((DH (cosmo--get-hubble-distance))
-        (int (cosmo--trapz 'cosmo--inv-efunc 0.0 redshift)))
+        (int (cosmo--trapz #'cosmo--inv-efunc 0.0 redshift)))
     (* DH int)))
 
 
