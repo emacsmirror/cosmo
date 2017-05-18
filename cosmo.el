@@ -60,6 +60,7 @@
     (- 1.0 omatter olambda oradiation)))
 
 
+;; Numerical utilities
 (defun cosmo--sinh (x)
   "Hyperbolic sine of real arguments X."
   (* 0.5 (- (exp x) (exp (- x)))))
@@ -86,15 +87,7 @@ Example:
     (* step sum)))
 
 
-;; (defun cosmo-set-default ()
-;;   "Set cosmological parameters to the default values."
-;;   (interactive)
-;;     (clrhash cosmo--params)
-;;     (puthash "H0 [Km/s/Mpc]" 70.0 cosmo--params)
-;;     (puthash "omatter" 0.3 cosmo--params)
-;;   nil)
-
-
+;; Read parameters
 (defun cosmo--read-param (name)
   "Read parameter NAME from minibuffer and convert it to number."
   (string-to-number (read-from-minibuffer (format "Enter %s: " name))))
@@ -108,11 +101,10 @@ parameter table."
 
 (defun cosmo--check-param (name value)
   "Check the validity of NAME (a cosmological parameter) VALUE."
-  ;; (unless (numberp value) (error "Error: parameter must be a number"))
   (cond ((or (string= name "omatter")
-	     (string= name "olambda")
-	     (string= name "oradiation"))
-         (unless (> value 0.0)
+             (string= name "olambda")
+             (string= name "oradiation"))
+         (unless (>= value 0.0)
            (error "Error: density parameter must be positive")))))
 
 
@@ -125,6 +117,16 @@ parameter table."
            cosmo--params))
 
 
+;; (defun cosmo-set-default ()
+;;   "Set cosmological parameters to the default values."
+;;   (interactive)
+;;     (clrhash cosmo--params)
+;;     (puthash "H0 [Km/s/Mpc]" 70.0 cosmo--params)
+;;     (puthash "omatter" 0.3 cosmo--params)
+;;   nil)
+
+
+;; Compute cosmological functions
 (defun cosmo--efunc (redshift)
   "E(z) function at a given REDSHIFT."
   (let ((omatter (gethash "omatter" cosmo--params))
@@ -138,8 +140,15 @@ parameter table."
              olambda))))
 
 
+;; Compute cosmological functions
+(defun cosmo--inv-efunc (redshift)
+  "Inverse E(z) function at a given REDSHIFT."
+  (cosmo--efunc redshift))
+
+
 (defun cosmo--get-hubble (redshift)
-  "Hubble parameter for Lambda-CDM at a given REDSHIFT."
+  "Hubble parameter [Km/s/Mpc] for Lambda-CDM at a given
+REDSHIFT."
   (let ((H0 (gethash "H0 [Km/s/Mpc]" cosmo--params))
         (zp1 (+ 1 redshift)))
     (* H0 (cosmo--efunc redshift))))
@@ -152,6 +161,34 @@ parameter table."
     (message (format "%s km/s/Mpc" (cosmo--get-hubble z)))))
 
 
+(defun cosmo--get-hubble-distance ()
+  "Hubble distance [1/Mpc] for Lambda-CDM."
+  (let ((H0 (gethash "H0 [Km/s/Mpc]" cosmo--params)))
+    (/ 3.0e5 H0)))
+
+
+;; (defun cosmo-hubble-distance ()
+;;   "Display Hubble parameter in mini-buffer."
+;;   (interactive)
+;;   (message (format "%s 1/Mpc" (cosmo--get-hubble-distance))))
+
+
+(defun cosmo--get-los-comoving-distance (redshift)
+  "Line-of-sight comoving distance [Mpc] for Lambda-CDM at a
+given REDSHIFT."
+  (let ((DH (cosmo--get-hubble-distance))
+        (int (cosmo--trapz 'cosmo--inv-efunc 0.0 redshift)))
+    (* DH int)))
+
+
+(defun cosmo-los-comoving-distance ()
+  "Display line-of-sight comoving distance in mini-buffer."
+  (interactive)
+  (let ((z (cosmo--read-param "redshift")))
+    (message (format "%s Mpc" (cosmo--get-los-comoving-distance z)))))
+
+
+;; Write output
 (defun cosmo--write-calc-header ()
   "Write header for the cosmological calculator summary buffer."
   (let ((head "Cosmology calculator.\n\n")

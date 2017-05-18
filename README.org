@@ -31,13 +31,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   component, besides ordinary species. The model is characterized by
   the following parameters:
   - H_0 :: Hubble parameter (expansion rate) today
-  - Omega_m0 :: Fractional matter density parameter today.
-  - Omega_Lambda ::  Cosmological constant density parameter.
-  - Omega_r0 :: Fractional radiation density parameter today.
-  - Omega_k0 ::  Curvature density parameter today. This
-                 parameter is derived from the others above
-                 accordin to Friedmann's equation =Omega_m0 +
-                 Omega_Lambda + Omega_r0 + Omega_k0 = 1=.
+  - Omega_m0 :: Matter density parameter today.
+  - Omega_Lambda :: Cosmological constant density parameter.
+  - Omega_r0 :: Radiation density parameter today.
+  - Omega_k0 :: Curvature density parameter today. This
+                parameter is derived from the others above
+                according to Friedmann's equation
+                =Omega_m0 + Omega_Lambda + Omega_r0 + Omega_k0 = 1=.
 
   All cosmological quantities are computed at a given redshift value:
   - redshift :: Gravitational redshift of photons frequency due to the
@@ -106,9 +106,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   - cosmo-set-params :: Change the values of cosmological parameters.
 
   A complete list of interactive commands can be obtained by typing
-  =M-x cosmo- TAB=. Documentation is available through =C-h f
-  cosmo-command=, where =command= should be adapted to the particular
-  command. Definitions follow Hoggs 1999 ([[https://arxiv.org/abs/astro-ph/9905116][arXiv:astro-ph/9905116]]).
+  =M-x cosmo- TAB=. Documentation is available through
+  =C-h f cosmo-command=, where =command= should be adapted to the
+  particular command. Definitions follow Hoggs 1999
+  ([[https://arxiv.org/abs/astro-ph/9905116][arXiv:astro-ph/9905116]]).
 
 * Support
 
