@@ -46,9 +46,9 @@
 (defvar cosmo--params
   (let ((table (make-hash-table :test 'equal)))
     (puthash "H0 [Km/s/Mpc]" 70.0 table) ; Hubble today km/s/Mpc
-    (puthash "omatter" 0.3 table)        ; Matter today
-    (puthash "olambda" 0.7 table)        ; Curvature today
-    (puthash "oradiation" 0.0 table)     ; Radiation today
+    (puthash "omatter" 0.3 table)        ; Matter density today
+    (puthash "olambda" 0.7 table)        ; Curvature density today
+    (puthash "oradiation" 0.0 table)     ; Radiation density today
     table)
   "Table containing Lambda-CDM cosmological parameters.")
 
@@ -73,7 +73,7 @@
 
 
 (defun cosmo--read-param (name)
-  "Read parameter NAME from minibuffer and convert it to number."
+  "Read parameter NAME from minibuffer and convert it to a number."
   (let ((value (read-from-minibuffer (format "Enter %s: " name))))
     (if (cosmo--string-number-p value)
         (string-to-number value)
@@ -287,6 +287,28 @@ Argument HUBBLE Hubble parameter at given redshift."
     ;; (special-mode) ; TODO: the buffer won't update, it must be
     ;;                ; killed.
     (other-window 1)))
+
+
+;;; Unit test.
+(eval-when-compile
+  (require 'cl)
+
+  (defun cosmo-and-reduce (seq)
+    "Reduce sequence SEQ by applying the `and` special form."
+    (reduce '(lambda (x y) (and x y)) seq))
+
+  (defun cosmo-test-string-number-p ()
+    (let ((numbers '("1" "+2" "-30" "1.2" "+30.4" "-5.60")))
+      (assert
+       (cosmo-and-reduce (mapcar 'cosmo--string-number-p numbers)))))
+
+  (defun cosmo-test-string-notnumber-p ()
+    (let ((notnumbers '("a" "+abc" "-30..0" "10.0..2")))
+      (assert
+       (not (cosmo-and-reduce (mapcar 'cosmo--string-number-p notnumbers))))))
+
+  (cosmo-test-string-number-p)
+  (cosmo-test-string-notnumber-p))
 
 
 (provide 'cosmo)
