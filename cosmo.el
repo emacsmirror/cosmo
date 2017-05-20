@@ -227,10 +227,8 @@ Example:
 (defun cosmo--write-calc-header ()
   "Write header for the cosmological calculator summary buffer."
   (let ((head "Cosmology calculator.\n\n")
-        (help "(`C-x o` to change buffer)\n\n")) ; TODO: Remove help?
-
-    (insert (propertize help 'font-lock-face 'italic)) ; TODO: Fix italic.
-
+        (help "(`q`: quite, SPC: scroll-up, DEL: scroll-down)\n\n"))
+    (insert (propertize help 'font-lock-face 'italic))
     (insert head)))
 
 
@@ -280,16 +278,19 @@ Argument HUBBLE Hubble parameter at given redshift."
          (oradiation (gethash "oradiation" cosmo--params))
          (H0 (gethash "H0 [Km/s/Mpc]" cosmo--params))
          (hubble (cosmo--get-hubble redshift)))
-    (switch-to-buffer-other-window "*cosmo*")
+    (switch-to-buffer-other-window "*Cosmo*")
+    (read-only-mode -1)                 ; Overwrite if buffer exists.
     (erase-buffer)
     (cosmo--write-calc redshift H0 omatter olambda oradiation hubble)
-    (beginning-of-buffer)
-    ;; (special-mode) ; TODO: the buffer won't update, it must be
-    ;;                ; killed.
-    (other-window 1)))
+    (goto-char (point-min))
+    (special-mode)
+    (visual-line-mode -1)
+    ;; (other-window 1)
+    ))
 
 
 ;;; Unit test.
+
 (eval-when-compile
   (require 'cl)
 
