@@ -5,9 +5,9 @@
 ;;
 ;; Author: Francesco Montanari <fmnt@fmnt.info>
 ;; Created: 22 April 2017
-(defconst cosmo:version "0.1") ;; Version:
+;; Version: 0.1
 ;; Keywords: tools
-;; Homepage: http://fmnt.info/software/cosmo_el.html
+;; Homepage: https://gitlab.com/montanari/cosmo-el
 ;;
 ;; This file is not part of GNU Emacs.
 ;;
@@ -65,9 +65,19 @@
 
 ;;; Handle input.
 
+(defun cosmo--string-number-p (string)
+  "Test whether STRING represents a number."
+  (if (string-match "\\`[-+]?[0-9]+\\.?[0-9]*\\'" string)
+      t
+    nil))
+
+
 (defun cosmo--read-param (name)
   "Read parameter NAME from minibuffer and convert it to number."
-  (string-to-number (read-from-minibuffer (format "Enter %s: " name))))
+  (let ((value (read-from-minibuffer (format "Enter %s: " name))))
+    (if (cosmo--string-number-p value)
+        (string-to-number value)
+      (error "Error: parameter must be a number"))))
 
 
 (defun cosmo--put-param (name)
@@ -87,7 +97,7 @@
 (defun cosmo-set-params ()
   "Change the values of cosmological parameters."
   (interactive)
-  (maphash (lambda (key value)
+  (maphash (lambda (key _value)
              (cosmo--put-param key)
              (cosmo--check-param key (gethash key cosmo--params)))
            cosmo--params))
@@ -152,8 +162,7 @@ Example:
 
 (defun cosmo--get-hubble (redshift)
   "Hubble parameter [Km/s/Mpc] for Lambda-CDM at a given REDSHIFT."
-  (let ((H0 (gethash "H0 [Km/s/Mpc]" cosmo--params))
-        (zp1 (+ 1 redshift)))
+  (let ((H0 (gethash "H0 [Km/s/Mpc]" cosmo--params)))
     (* H0 (cosmo--efunc redshift))))
 
 
@@ -275,7 +284,7 @@ Argument HUBBLE Hubble parameter at given redshift."
     (erase-buffer)
     (cosmo--write-calc redshift H0 omatter olambda oradiation hubble)
     (beginning-of-buffer)
-    ;; (special-mode) ; Problem: the buffer won't update, it must be
+    ;; (special-mode) ; TODO: the buffer won't update, it must be
     ;;                ; killed.
     (other-window 1)))
 
