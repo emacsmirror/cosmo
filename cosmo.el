@@ -209,7 +209,7 @@ Example:
 (defun cosmo--write-calc-header ()
   "Write header for the cosmological calculator summary buffer."
   (let ((head "Cosmology calculator.\n\n")
-        (help "(`q`: quite, SPC: scroll-up, DEL: scroll-down)\n\n"))
+        (help "(`q` to quite)\n\n"))
     (insert (propertize help 'font-lock-face 'italic))
     (insert head)))
 
