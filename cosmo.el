@@ -272,21 +272,16 @@ Argument HUBBLE Hubble parameter at given redshift."
 (defun cosmo-calculator ()
   "Compute cosmology and display summary table in a new buffer."
   (interactive)
-  (let* ((redshift (cosmo--read-param "redshift"))
+  (let* ((cosmo-buffer "*Cosmo*")
+         (redshift (cosmo--read-param "redshift"))
          (omatter (gethash "omatter" cosmo--params))
          (olambda (gethash "olambda" cosmo--params))
          (oradiation (gethash "oradiation" cosmo--params))
          (H0 (gethash "H0 [Km/s/Mpc]" cosmo--params))
          (hubble (cosmo--get-hubble redshift)))
-    (switch-to-buffer-other-window "*Cosmo*")
-    (read-only-mode -1)                 ; Overwrite if buffer exists.
-    (erase-buffer)
-    (cosmo--write-calc redshift H0 omatter olambda oradiation hubble)
-    (goto-char (point-min))
-    (special-mode)
-    (visual-line-mode -1)
-    ;; (other-window 1)
-    ))
+    (with-output-to-temp-buffer cosmo-buffer
+      (pop-to-buffer cosmo-buffer)
+      (cosmo--write-calc redshift H0 omatter olambda oradiation hubble))))
 
 
 ;;; Unit test.
