@@ -40,11 +40,16 @@
 
 ;;; Bugs:
 
-;; - Distances seem wrong. Need testing.
+;; - None known.
 
 ;;; Todo:
 
+;; - Important: distances at large redshifts need more trapezoidal
+;;   steps! Replace the integration algorithm: integrate over a
+;;   logarithmic step.
+
 ;; - Add all distances from Hoggs 1999.
+
 ;; - Suggest default parameters when reading them with the related
 ;;   command; set the to default values if none is entered.
 
@@ -148,7 +153,7 @@ Example:
 
 (defun cosmo-inv-efunc (redshift)
   "Inverse E(z) function at a given REDSHIFT."
-  (cosmo-efunc redshift))
+  (/ 1 (cosmo-efunc redshift)))
 
 (defun cosmo-get-hubble (redshift)
   "Hubble parameter [Km/s/Mpc] for Lambda-CDM at a given REDSHIFT."
@@ -272,6 +277,15 @@ Argument HUBBLE Hubble parameter at given redshift."
     "Reduce sequence SEQ by applying the `and` special form."
     (reduce #'(lambda (x y) (and x y)) seq))
 
+  (defun cosmo-almost-eq (num1 num2 &optional abstol)
+    ;; TODO: It may make more sense to test the relative
+    ;; tolerance. Decide how to handle the case in which the arguments
+    ;; are zero; for instance, both a relative and absolute tolerance
+    ;; can be specified and the largest one is considered.
+    "Return t if the two numbers differ by less than ABSTOL."
+    (or abstol (setq abstol 1e-8))       ; Default relative tolerance
+      (> abstol (abs (- num1 num2))))
+
   (defun cosmo-test-string-number-p ()
     "Test string representing numbers."
     (let ((numbers '("1" "+2" "-30" "1.2" "+30.4" "-5.60")))
@@ -284,8 +298,23 @@ Argument HUBBLE Hubble parameter at given redshift."
       (assert
        (not (cosmo-and-reduce (mapcar #'cosmo--string-number-p notnumbers))))))
 
+  (defun cosmo-test-set-default ()
+    "Set default test cosmological parameters."
+        (puthash "H0 [Km/s/Mpc]" 70.0 cosmo--params) ; Hubble today km/s/Mpc
+        (puthash "omatter" 0.3 cosmo--params) ; Matter density today
+        (puthash "olambda" 0.7 cosmo--params) ; Curvature density today
+        (puthash "oradiation" 0.0 cosmo--params)) ; Radiation density today
+
+  (defun cosmo-test-efunc ()
+    ;; TODO: Set common testing redshifts and map the assertion for
+    ;; the whole list.
+    "Test the E(z) function."
+    (assert (cosmo-almost-eq (cosmo-efunc 0.5) 1.3087168333794188 1e-4)))
+
   (cosmo-test-string-number-p)
-  (cosmo-test-string-notnumber-p))
+  (cosmo-test-string-notnumber-p)
+  (cosmo-test-set-default)
+  (cosmo-test-efunc))
 
 (provide 'cosmo)
 
