@@ -43,6 +43,8 @@ def comoving_distance(reds, cosmo):
 
 
 if __name__ == '__main__':
+    # Remember to setq photons+neutrinos (Omega_rel*h^2 = 4.18e-05) in
+    # cosmo.el tests.
     cosmo = LambdaCDM(H0=70., Om0=0.3, Ode0=0.7)
     redshifts = (0., 0.1, 10., 1000.)
     efunc(redshifts, cosmo)

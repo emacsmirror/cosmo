@@ -44,9 +44,9 @@
 
 ;;; Todo:
 
-;; - Important: distances at large redshifts need more trapezoidal
-;;   steps! Replace the integration algorithm: integrate over a
-;;   logarithmic step.
+;; - Replace the integration algorithm: most cases will likely deal
+;;   with z<3, which requires a factor ~10 less steps than z>10. This
+;;   can be fixed by integrating over a logarithmic step.
 
 ;; - Add all distances from Hoggs 1999.
 
@@ -329,22 +329,24 @@ Argument HUBBLE Hubble parameter at given redshift."
         (puthash "oradiation" 8.5e-05 cosmo--params)) ; Radiation density today
 
   (defun cosmo-test-efunc ()
-    ;; TODO: Set common testing redshifts and map the assertion for
-    ;; the whole list.
     "Test the E(z) function."
     (assert (cosmo-almost-eq (cosmo-efunc 1000.0) 1.96592660e+04 1e-3)))
 
   (defun cosmo-test-inv-efunc ()
-    ;; TODO: Set common testing redshifts and map the assertion for
-    ;; the whole list.
-    "Test the E(z) function."
+    "Test the 1/E(z) function."
     (assert (cosmo-almost-eq (cosmo-inv-efunc 1000.0) 5.08665990e-05 1e-3)))
+
+  (defun cosmo-test-los-comoving-distance ()
+    "Test the line-of-sight comoving distance."
+    (assert (cosmo-almost-eq
+             (cosmo-get-los-comoving-distance 1000.0) 13598.01849955 1e-3)))
 
   (cosmo-test-string-number-p)
   (cosmo-test-string-notnumber-p)
   (cosmo-test-set-default)
   (cosmo-test-efunc)
-  (cosmo-test-inv-efunc))
+  (cosmo-test-inv-efunc)
+  (cosmo-test-los-comoving-distance))
 
 (provide 'cosmo)
 
