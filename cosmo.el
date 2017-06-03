@@ -301,14 +301,13 @@ Argument HUBBLE Hubble parameter at given redshift."
     "Reduce sequence SEQ by applying the `and` special form."
     (reduce #'(lambda (x y) (and x y)) seq))
 
-  (defun cosmo-almost-eq (num1 num2 &optional abstol)
-    ;; TODO: It may make more sense to test the relative
-    ;; tolerance. Decide how to handle the case in which the arguments
-    ;; are zero; for instance, both a relative and absolute tolerance
-    ;; can be specified and the largest one is considered.
+  (defun cosmo-almost-eq (num1 num2 &optional reltol)
+    ;; TODO: Decide how to handle the case in which the arguments are
+    ;; zero; for instance, both a relative and absolute tolerance can
+    ;; be specified and the largest one is considered.
     "Return t if the two numbers differ by less than ABSTOL."
-    (or abstol (setq abstol 1e-8))       ; Default relative tolerance
-      (> abstol (abs (- num1 num2))))
+    (or reltol (setq reltol 1e-8))       ; Default relative tolerance
+      (> reltol (abs (1- (/ num1 num2)))))
 
   (defun cosmo-test-string-number-p ()
     "Test string representing numbers."
@@ -333,13 +332,13 @@ Argument HUBBLE Hubble parameter at given redshift."
     ;; TODO: Set common testing redshifts and map the assertion for
     ;; the whole list.
     "Test the E(z) function."
-    (assert (cosmo-almost-eq (cosmo-efunc 1000.0) 1.96592660e+04 10.0)))
+    (assert (cosmo-almost-eq (cosmo-efunc 1000.0) 1.96592660e+04 1e-3)))
 
   (defun cosmo-test-inv-efunc ()
     ;; TODO: Set common testing redshifts and map the assertion for
     ;; the whole list.
     "Test the E(z) function."
-    (assert (cosmo-almost-eq (cosmo-inv-efunc 10.0) 4.99228197e-02 1e-6)))
+    (assert (cosmo-almost-eq (cosmo-inv-efunc 1000.0) 5.08665990e-05 1e-3)))
 
   (cosmo-test-string-number-p)
   (cosmo-test-string-notnumber-p)
