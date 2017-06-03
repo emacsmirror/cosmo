@@ -44,11 +44,14 @@
 
 ;;; Todo:
 
-;; - Replace the integration algorithm: most cases will likely deal
-;;   with z<3, which requires a factor ~10 less steps than z>10. This
-;;   can be fixed by integrating over a logarithmic step.
-
 ;; - Add all distances from Hoggs 1999.
+
+;; - Simpson's rule performs well for standard cosmologies and for z <
+;;   1000. If non-standard cosmologies or very large redshifts are
+;;   required, more steps may be required. They should be set
+;;   automatically, the user should only pass a max number of
+;;   steps. It may be convenient to look for libraries implementing
+;;   adaptive quadrature.
 
 ;; - Suggest default parameters when reading them with the related
 ;;   command; set the to default values if none is entered.
