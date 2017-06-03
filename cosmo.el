@@ -137,7 +137,45 @@ Example:
     (setq sum (+ sum (* 0.5 (funcall func b))))
     (* step sum)))
 
-(defun cosmo-simps (f a b &optional n)
+(defun cosmo-log-space (min max nstep)
+  "Create a list of log-spaced elements from MIN to MAX, with length NSTEP."
+  (unless (> nstep 1)
+    (error "Error: nstep must be larger than one"))
+  (unless (< 0 min max)
+    (error "Error: condition 0 < min <max not satisfied"))
+  ;; Log step is defined by S_{k+1}/S_{k} = const, which gives
+  ;; const = (S_N/S_0)^(1/N).
+  (let ((ratio (expt (/ max min) (/ 1.0 nstep)))
+        (log-space ())
+        (next min))
+    (dotimes (i (1+ nstep))
+      (push next log-space)
+      (setq next (* next ratio)))
+    (reverse log-space)))
+
+(defun cosmo-trapz-log (func a b &optional nstep)
+  "Trapezoidal rule with logarithmic step.
+
+Integrate a function FUNC of one argument from A to B in NSTEP
+logarithmic spaced steps.  The values A and B will be considered
+as float.
+
+Example:
+\(cosmo-trapz-log #'\(lambda \(x\) x\) 0.0 1.0\)"
+  (let* ((a (float a))                  ; Extremes must be floats.
+         (b (float b))
+         (nstep (or nstep 50))
+         (log-space (cosmo-log-space a b nstep))
+         (sum 0.0))
+    (dotimes (i nstep)
+      (let ((xi+1 (nth (1+ i) log-space))
+            (xi (nth i log-space)))
+        (setq sum (+ sum (* (- xi+1 xi)
+                            (+ (funcall func xi+1)
+                               (funcall func xi)))))))
+    (* 0.5 sum)))
+
+(defun cosmo-simps (func a b &optional n)
   "Simpson rule.
 
 Integrate a function FUNC of one argument from A to B in N
@@ -150,14 +188,14 @@ Example:
         (b (float b))
         (n (or n 50)))
     (loop with h = (/ (- b a) n)
-          with sum1 = (funcall f (+ a (/ h 2)))
+          with sum1 = (funcall func (+ a (/ h 2)))
           with sum2 = 0
           for i from 1 below n
-          do (incf sum1 (funcall f (+ a (* h i) (/ h 2))))
-          do (incf sum2 (funcall f (+ a (* h i))))
+          do (incf sum1 (funcall func (+ a (* h i) (/ h 2))))
+          do (incf sum2 (funcall func (+ a (* h i))))
           finally (return (* (/ h 6)
-                             (+ (funcall f a)
-                                (funcall f b)
+                             (+ (funcall func a)
+                                (funcall func b)
                                 (* 4 sum1)
                                 (* 2 sum2)))))))
 
