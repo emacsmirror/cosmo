@@ -137,6 +137,30 @@ Example:
     (setq sum (+ sum (* 0.5 (funcall func b))))
     (* step sum)))
 
+(defun cosmo-simps (f a b &optional n)
+  "Simpson rule.
+
+Integrate a function FUNC of one argument from A to B in N
+equally spaced steps.  The values A and B will be considered as
+float.
+
+Example:
+\(cosmo-simps #'\(lambda \(x\) x\) 0.0 1.0\)"
+  (let ((a (float a))                  ; Extremes must be floats.
+        (b (float b))
+        (n (or n 50)))
+    (loop with h = (/ (- b a) n)
+          with sum1 = (funcall f (+ a (/ h 2)))
+          with sum2 = 0
+          for i from 1 below n
+          do (incf sum1 (funcall f (+ a (* h i) (/ h 2))))
+          do (incf sum2 (funcall f (+ a (* h i))))
+          finally (return (* (/ h 6)
+                             (+ (funcall f a)
+                                (funcall f b)
+                                (* 4 sum1)
+                                (* 2 sum2)))))))
+
 ;;; Compute cosmological functions.
 
 (defun cosmo-efunc (redshift)
@@ -153,7 +177,7 @@ Example:
 
 (defun cosmo-inv-efunc (redshift)
   "Inverse E(z) function at a given REDSHIFT."
-  (/ 1 (cosmo-efunc redshift)))
+  (/ 1.0 (cosmo-efunc redshift)))
 
 (defun cosmo-get-hubble (redshift)
   "Hubble parameter [Km/s/Mpc] for Lambda-CDM at a given REDSHIFT."
@@ -179,7 +203,7 @@ Example:
 (defun cosmo-get-los-comoving-distance (redshift)
   "Line-of-sight comoving distance [Mpc] for Lambda-CDM at a given REDSHIFT."
   (let ((DH (cosmo-get-hubble-distance))
-        (int (cosmo-trapz #'cosmo-inv-efunc 0.0 redshift)))
+        (int (cosmo-simps #'cosmo-inv-efunc 0.0 redshift 1000)))
     (* DH int)))
 
 (defun cosmo-los-comoving-distance ()
@@ -303,18 +327,25 @@ Argument HUBBLE Hubble parameter at given redshift."
         (puthash "H0 [Km/s/Mpc]" 70.0 cosmo--params) ; Hubble today km/s/Mpc
         (puthash "omatter" 0.3 cosmo--params) ; Matter density today
         (puthash "olambda" 0.7 cosmo--params) ; Curvature density today
-        (puthash "oradiation" 0.0 cosmo--params)) ; Radiation density today
+        (puthash "oradiation" 8.5e-05 cosmo--params)) ; Radiation density today
 
   (defun cosmo-test-efunc ()
     ;; TODO: Set common testing redshifts and map the assertion for
     ;; the whole list.
     "Test the E(z) function."
-    (assert (cosmo-almost-eq (cosmo-efunc 0.5) 1.3087168333794188 1e-4)))
+    (assert (cosmo-almost-eq (cosmo-efunc 1000.0) 1.96592660e+04 10.0)))
+
+  (defun cosmo-test-inv-efunc ()
+    ;; TODO: Set common testing redshifts and map the assertion for
+    ;; the whole list.
+    "Test the E(z) function."
+    (assert (cosmo-almost-eq (cosmo-inv-efunc 10.0) 4.99228197e-02 1e-6)))
 
   (cosmo-test-string-number-p)
   (cosmo-test-string-notnumber-p)
   (cosmo-test-set-default)
-  (cosmo-test-efunc))
+  (cosmo-test-efunc)
+  (cosmo-test-inv-efunc))
 
 (provide 'cosmo)
 
