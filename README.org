@@ -33,7 +33,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   - H_0 :: Hubble parameter (expansion rate) today
   - Omega_m0 :: Matter density parameter today.
   - Omega_Lambda :: Cosmological constant density parameter.
-  - Omega_r0 :: Radiation density parameter today.
+  - Omega_r0 :: Relativistic species (e.g., photons plus
+                neutrinos) density parameter today.
   - Omega_k0 :: Curvature density parameter today. This
                 parameter is derived from the others above
                 according to Friedmann's equation

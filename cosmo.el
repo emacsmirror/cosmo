@@ -66,7 +66,7 @@
     (puthash "H0 [Km/s/Mpc]" 70.0 table) ; Hubble today km/s/Mpc
     (puthash "omatter" 0.3 table)        ; Matter density today
     (puthash "olambda" 0.7 table)        ; Curvature density today
-    (puthash "oradiation" 0.0 table)     ; Radiation density today
+    (puthash "orel" 0.0 table)     ; Relativistic density today
     table)
   "Table containing Lambda-CDM cosmological parameters.")
 
@@ -76,8 +76,8 @@
   "Get curvature density parameter today from Friedmann equations."
   (let ((omatter (gethash "omatter" cosmo--params))
         (olambda (gethash "olambda" cosmo--params))
-        (oradiation (gethash "oradiation" cosmo--params)))
-    (- 1.0 omatter olambda oradiation)))
+        (orel (gethash "orel" cosmo--params)))
+    (- 1.0 omatter olambda orel)))
 
 ;;; Handle input.
 
@@ -102,7 +102,7 @@
   "Check the validity of NAME (a cosmological parameter) VALUE."
   (cond ((or (string= name "omatter")
              (string= name "olambda")
-             (string= name "oradiation"))
+             (string= name "orel"))
          (unless (>= value 0.0)
            (error "Error: density parameter must be positive")))))
 
@@ -208,10 +208,10 @@ Example:
   "E(z) function at a given REDSHIFT."
   (let ((omatter (gethash "omatter" cosmo--params))
         (olambda (gethash "olambda" cosmo--params))
-        (oradiation (gethash "oradiation" cosmo--params))
+        (orel (gethash "orel" cosmo--params))
         (ocurvature (cosmo-get-ocurvature))
         (zp1 (+ 1 redshift)))
-    (sqrt (+ (* oradiation (expt zp1 4.0))
+    (sqrt (+ (* orel (expt zp1 4.0))
              (* omatter (expt zp1 3.0))
              (* ocurvature (expt zp1 2.0))
              olambda))))
@@ -283,13 +283,13 @@ Example:
     (insert (propertize help 'font-lock-face 'italic))
     (insert head)))
 
-(defun cosmo--write-calc (redshift H0 omatter olambda oradiation hubble)
+(defun cosmo--write-calc (redshift H0 omatter olambda orel hubble)
   "Format and insert cosmological table in buffer.
 Argument REDSHIFT redshift.
 Argument H0 Hubble parameter today.
 Argument OMATTER matter density parameter.
 Argument OLAMBDA cosmological constant density parameter.
-Argument ORADIATION density parameter.
+Argument OREL density parameter.
 Argument HUBBLE Hubble parameter at given redshift."
   ;; Input parameters.
   (cosmo--write-calc-header)
@@ -303,8 +303,8 @@ Argument HUBBLE Hubble parameter at given redshift."
                   omatter)
           (format "- Cosmological constant fractional density: %s\n"
                   olambda)
-          (format "- Radiation fractional density, now:        %s\n"
-                  oradiation)
+          (format "- Relativistic fractional density, now:     %s\n"
+                  orel)
           "\n")
   ;; Derived parameters.
   (insert "Derived parameters\n"
@@ -326,12 +326,12 @@ Argument HUBBLE Hubble parameter at given redshift."
          (redshift (cosmo--read-param "redshift"))
          (omatter (gethash "omatter" cosmo--params))
          (olambda (gethash "olambda" cosmo--params))
-         (oradiation (gethash "oradiation" cosmo--params))
+         (orel (gethash "orel" cosmo--params))
          (H0 (gethash "H0 [Km/s/Mpc]" cosmo--params))
          (hubble (cosmo-get-hubble redshift)))
     (with-output-to-temp-buffer cosmo-buffer
       (pop-to-buffer cosmo-buffer)
-      (cosmo--write-calc redshift H0 omatter olambda oradiation hubble))))
+      (cosmo--write-calc redshift H0 omatter olambda orel hubble))))
 
 ;;; Unit test.
 
@@ -367,7 +367,7 @@ Argument HUBBLE Hubble parameter at given redshift."
         (puthash "H0 [Km/s/Mpc]" 70.0 cosmo--params) ; Hubble today km/s/Mpc
         (puthash "omatter" 0.3 cosmo--params) ; Matter density today
         (puthash "olambda" 0.7 cosmo--params) ; Curvature density today
-        (puthash "oradiation" 8.5e-05 cosmo--params)) ; Radiation density today
+        (puthash "orel" 8.5e-05 cosmo--params)) ; Relativisitc density today
 
   (defun cosmo-test-efunc ()
     "Test the E(z) function."
