@@ -25,14 +25,29 @@
 
 ;;; Commentary:
 
-;; This program provides a cosmological calculator for Lambda-CDM
-;; cosmological models.  Such a framework describes a homogeneous and
-;; isotropic universe containing a cosmological constant (Lambda) and
-;; a Cold Dark Matter (CDM) component, besides ordinary species.
+;; This package provides a cosmological calculator Lambda-CDM
+;; models. Such a framework describes a homogeneous and isotropic
+;; universe containing a cosmological constant (Lambda) and a Cold
+;; Dark Matter (CDM) component, besides ordinary species. The
+;; model is characterized by the following parameters:
 
-;; Several interactive commands are provided to set the cosmological
-;; parameters and to compute cosmological functions at given redshift
-;; values.  Definitions follow Hoggs (1999)
+;; - H_0 :: Hubble parameter (expansion rate) today
+;; - Omega_m0 :: Matter density parameter today.
+;; - Omega_Lambda :: Cosmological constant density parameter.
+;; - Omega_r0 :: Relativistic species (e.g., photons plus
+;;               neutrinos) density parameter today.
+;; - Omega_k0 :: Curvature density parameter today. This
+;;               parameter is derived from the others above
+;;               according to Friedmann's equation
+;;               =Omega_m0 + Omega_Lambda + Omega_r0 + Omega_k0 = 1=.
+
+;; All cosmological quantities are computed at a given redshift
+;; value:
+
+;; - redshift :: Gravitational redshift of photons frequency due to the
+;;               expansion of the Universe.
+
+;; Definitions follow Hoggs (1999)
 ;; <https://arxiv.org/abs/astro-ph/9905116>.
 
 ;; Names with "--" are for functions and variables that are meant to
@@ -164,7 +179,7 @@ logarithmic spaced steps.  The values A and B will be considered
 as float.
 
 Example:
-\(cosmo-trapz-log #'\(lambda \(x\) x\) 0.0 1.0\)"
+\(cosmo-trapz-log #'\(lambda \(x\) x\) 0.1 1.0\)"
   (let* ((a (float a))                  ; Extremes must be floats.
          (b (float b))
          (nstep (or nstep 50))
@@ -283,14 +298,15 @@ Example:
     (insert (propertize help 'font-lock-face 'italic))
     (insert head)))
 
-(defun cosmo--write-calc (redshift H0 omatter olambda orel hubble)
+(defun cosmo--write-calc (redshift H0 omatter olambda orel hubble los-dist)
   "Format and insert cosmological table in buffer.
 Argument REDSHIFT redshift.
 Argument H0 Hubble parameter today.
 Argument OMATTER matter density parameter.
 Argument OLAMBDA cosmological constant density parameter.
 Argument OREL density parameter.
-Argument HUBBLE Hubble parameter at given redshift."
+Argument HUBBLE Hubble parameter at given redshift.
+Argument LOS-DIST line-of-sight comoving distance at given redshift."
   ;; Input parameters.
   (cosmo--write-calc-header)
   (insert "Input Parameters\n"
@@ -315,8 +331,10 @@ Argument HUBBLE Hubble parameter at given redshift."
   ;; Cosmological functions.
   (insert "Cosmography at required redshift\n"
           "--------------------------------\n"
-          (format "- Hubble parameter [km/s/Mpc]: %s\n"
-                  hubble))
+          (format "- Hubble parameter [km/s/Mpc]:           %s\n"
+                  hubble)
+          (format "- Line-of-sight comoving distance [Mpc]: %s\n"
+                  los-dist))
   nil)
 
 (defun cosmo-calculator ()
@@ -328,10 +346,12 @@ Argument HUBBLE Hubble parameter at given redshift."
          (olambda (gethash "olambda" cosmo--params))
          (orel (gethash "orel" cosmo--params))
          (H0 (gethash "H0 [Km/s/Mpc]" cosmo--params))
-         (hubble (cosmo-get-hubble redshift)))
+         (hubble (cosmo-get-hubble redshift))
+         (los-dist (cosmo-get-los-comoving-distance redshift))
+)
     (with-output-to-temp-buffer cosmo-buffer
       (pop-to-buffer cosmo-buffer)
-      (cosmo--write-calc redshift H0 omatter olambda orel hubble))))
+      (cosmo--write-calc redshift H0 omatter olambda orel hubble los-dist))))
 
 ;;; Unit test.
 
