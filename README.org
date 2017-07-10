@@ -44,7 +44,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   - redshift :: Gravitational redshift of photons frequency due to the
                 expansion of the Universe.
 
-  Definitions follow Hoggs (1999) [[[https://arxiv.org/abs/astro-ph/9905116][arXiv:astro-ph/9905116]]].
+  Definitions follow Hogg (1999) [[[https://arxiv.org/abs/astro-ph/9905116][arXiv:astro-ph/9905116]]].
 
 * Download
 
@@ -109,7 +109,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   A complete list of interactive commands can be obtained by typing
   =M-x cosmo- TAB=. Documentation is available through
   =C-h f cosmo-command=, where =command= should be adapted to the
-  particular command. Definitions follow Hoggs 1999
+  particular command. Definitions follow Hogg 1999
   ([[https://arxiv.org/abs/astro-ph/9905116][arXiv:astro-ph/9905116]]).
 
 * Support

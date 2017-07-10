@@ -1,25 +1,25 @@
 ;;; cosmo.el --- Cosmological Calculator    -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2017 Francesco Montanari
-
+;;
 ;; Author: Francesco Montanari <fmnt@fmnt.info>
 ;; Created: 22 April 2017
 ;; Version: 0.1
 ;; Keywords: tools
 ;; Homepage: https://gitlab.com/montanari/cosmo-el
-
+;;
 ;; This file is not part of GNU Emacs.
-
+;;
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
 ;; the Free Software Foundation, either version 3 of the License, or
 ;; (at your option) any later version.
-
+;;
 ;; This program is distributed in the hope that it will be useful,
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;; GNU General Public License for more details.
-
+;;
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -30,7 +30,7 @@
 ;; universe containing a cosmological constant (Lambda) and a Cold
 ;; Dark Matter (CDM) component, besides ordinary species. The
 ;; model is characterized by the following parameters:
-
+;;
 ;; - H_0 :: Hubble parameter (expansion rate) today
 ;; - Omega_m0 :: Matter density parameter today.
 ;; - Omega_Lambda :: Cosmological constant density parameter.
@@ -40,16 +40,16 @@
 ;;               parameter is derived from the others above
 ;;               according to Friedmann's equation
 ;;               =Omega_m0 + Omega_Lambda + Omega_r0 + Omega_k0 = 1=.
-
+;;
 ;; All cosmological quantities are computed at a given redshift
 ;; value:
-
+;;
 ;; - redshift :: Gravitational redshift of photons frequency due to the
 ;;               expansion of the Universe.
-
-;; Definitions follow Hoggs (1999)
+;;
+;; Definitions follow Hogg (1999)
 ;; <https://arxiv.org/abs/astro-ph/9905116>.
-
+;;
 ;; Names with "--" are for functions and variables that are meant to
 ;; be for internal use only.
 
@@ -59,17 +59,24 @@
 
 ;;; Todo:
 
-;; - Add all distances from Hoggs 1999.
-
+;; - Add all distances from Hogg 1999.
+;;
 ;; - Simpson's rule performs well for standard cosmologies and for z <
 ;;   1000. If non-standard cosmologies or very large redshifts are
 ;;   required, more steps may be required. They should be set
 ;;   automatically, the user should only pass a max number of
-;;   steps. It may be convenient to look for libraries implementing
-;;   adaptive quadrature.
-
+;;   steps.
+;;
+;; - Consider using Calc as a library for quadrature, special
+;;   functions (sinh) and maybe to plot.
+;;
+;; - Implement function cosmo-pedia providing fast reference to basic
+;;   equations (e.g., relation among different distances) and units
+;;   (e.g., H0 in 1/Mpc and km/s/Mpc, cm <--> Mpc, ...).
+;;
 ;; - Suggest default parameters when reading them with the related
 ;;   command; set the to default values if none is entered.
+
 
 ;;; Code:
 
@@ -78,10 +85,10 @@
 ;; Hash table containing all independent cosmological parameters.
 (defvar cosmo--params
   (let ((table (make-hash-table :test #'equal)))
-    (puthash "H0 [Km/s/Mpc]" 70.0 table) ; Hubble today km/s/Mpc
-    (puthash "omatter" 0.3 table)        ; Matter density today
-    (puthash "olambda" 0.7 table)        ; Curvature density today
-    (puthash "orel" 0.0 table)     ; Relativistic density today
+    (puthash "H0 [Km/s/Mpc]" 70.0 table) ; Hubble today km/s/Mpc.
+    (puthash "omatter" 0.3 table)        ; Matter density today.
+    (puthash "olambda" 0.7 table)        ; Curvature density today.
+    (puthash "orel" 0.0 table)           ; Relativistic density today.
     table)
   "Table containing Lambda-CDM cosmological parameters.")
 
@@ -129,80 +136,21 @@
              (cosmo--check-param key (gethash key cosmo--params)))
            cosmo--params))
 
-;;; Numerical utilities.
+;;; Numerical utilities. (May be replaced by calling calc-eval.)
 
 (defun cosmo-sinh (x)
   "Hyperbolic sine of real arguments X."
   (* 0.5 (- (exp x) (exp (- x)))))
 
-(defun cosmo-trapz (func a b &optional nstep)
-  "Trapezoidal rule.
-
-Integrate a function FUNC of one argument from A to B in NSTEP
-equally spaced steps.  The values A and B will be considered as
-float.
-
-Example:
-\(cosmo-trapz #'\(lambda \(x\) x\) 0.0 1.0\)"
-  (let* ((a (float a))                  ; Extremes must be floats.
-         (b (float b))
-         (nstep (or nstep 50))
-         (step (/ (- b a) nstep))
-         (sum 0.0))
-    (setq sum (+ sum (* 0.5 (funcall func a))))
-    (dotimes (i (- nstep 1))
-      (setq sum (+ sum (funcall func (+ a (* step (1+ i)))))))
-    (setq sum (+ sum (* 0.5 (funcall func b))))
-    (* step sum)))
-
-(defun cosmo-log-space (min max nstep)
-  "Create a list of log-spaced elements from MIN to MAX, with length NSTEP."
-  (unless (> nstep 1)
-    (error "Error: nstep must be larger than one"))
-  (unless (< 0 min max)
-    (error "Error: condition 0 < min <max not satisfied"))
-  ;; Log step is defined by S_{k+1}/S_{k} = const, which gives
-  ;; const = (S_N/S_0)^(1/N).
-  (let ((ratio (expt (/ max min) (/ 1.0 nstep)))
-        (log-space ())
-        (next min))
-    (dotimes (i (1+ nstep))
-      (push next log-space)
-      (setq next (* next ratio)))
-    (reverse log-space)))
-
-(defun cosmo-trapz-log (func a b &optional nstep)
-  "Trapezoidal rule with logarithmic step.
-
-Integrate a function FUNC of one argument from A to B in NSTEP
-logarithmic spaced steps.  The values A and B will be considered
-as float.
-
-Example:
-\(cosmo-trapz-log #'\(lambda \(x\) x\) 0.1 1.0\)"
-  (let* ((a (float a))                  ; Extremes must be floats.
-         (b (float b))
-         (nstep (or nstep 50))
-         (log-space (cosmo-log-space a b nstep))
-         (sum 0.0))
-    (dotimes (i nstep)
-      (let ((xi+1 (nth (1+ i) log-space))
-            (xi (nth i log-space)))
-        (setq sum (+ sum (* (- xi+1 xi)
-                            (+ (funcall func xi+1)
-                               (funcall func xi)))))))
-    (* 0.5 sum)))
-
 (defun cosmo-simps (func a b &optional n)
   "Simpson rule.
 
-Integrate a function FUNC of one argument from A to B in N
-equally spaced steps.  The values A and B will be considered as
-float.
+Integrate a function FUNC of one argument from A to B in N steps.
+The values A and B will be considered as float.
 
 Example:
 \(cosmo-simps #'\(lambda \(x\) x\) 0.0 1.0\)"
-  (let ((a (float a))                  ; Extremes must be floats.
+  (let ((a (float a))                   ; Extremes must be floats.
         (b (float b))
         (n (or n 50)))
     (loop with h = (/ (- b a) n)
@@ -216,6 +164,7 @@ Example:
                                 (funcall func b)
                                 (* 4 sum1)
                                 (* 2 sum2)))))))
+
 
 ;;; Compute cosmological functions.
 
@@ -235,6 +184,21 @@ Example:
   "Inverse E(z) function at a given REDSHIFT."
   (/ 1.0 (cosmo-efunc redshift)))
 
+;; (defun cosmo-efunc-zp1 (zp1)
+;;   "E(z+1) function at a given ZP1 (redshift+1) value."
+;;   (let ((omatter (gethash "omatter" cosmo--params))
+;;         (olambda (gethash "olambda" cosmo--params))
+;;         (orel (gethash "orel" cosmo--params))
+;;         (ocurvature (cosmo-get-ocurvature)))
+;;     (sqrt (+ (* orel (expt zp1 4.0))
+;;              (* omatter (expt zp1 3.0))
+;;              (* ocurvature (expt zp1 2.0))
+;;              olambda))))
+
+;; (defun cosmo-inv-efunc-zp1 (zp1)
+;;   "Inverse E(1+z) function at a given ZP1 (redshift+1)."
+;;   (/ 1.0 (cosmo-efunc zp1)))
+
 (defun cosmo-get-hubble (redshift)
   "Hubble parameter [Km/s/Mpc] for Lambda-CDM at a given REDSHIFT."
   (let ((H0 (gethash "H0 [Km/s/Mpc]" cosmo--params)))
@@ -247,12 +211,12 @@ Example:
     (message (format "%s km/s/Mpc" (cosmo-get-hubble z)))))
 
 (defun cosmo-get-hubble-distance ()
-  "Hubble distance 1/H0 [Mpc] for Lambda-CDM."
+  "Hubble distance c/H0 [Mpc] for Lambda-CDM."
   (let ((H0 (gethash "H0 [Km/s/Mpc]" cosmo--params)))
     (/ 3.0e5 H0)))
 
 (defun cosmo-hubble-distance ()
-  "Display Hubble distance 1/H0 [Mpc] in mini-buffer."
+  "Display Hubble distance c/H0 [Mpc] in mini-buffer."
   (interactive)
   (message (format "%s Mpc" (cosmo-get-hubble-distance))))
 
@@ -261,6 +225,12 @@ Example:
   (let ((DH (cosmo-get-hubble-distance))
         (int (cosmo-simps #'cosmo-inv-efunc 0.0 redshift 1000)))
     (* DH int)))
+
+;; (defun cosmo-get-los-comoving-distance (redshift)
+;;   "Line-of-sight comoving distance [Mpc] for Lambda-CDM at a given REDSHIFT."
+;;   (let ((DH (cosmo-get-hubble-distance))
+;;         (int (cosmo-simps #'cosmo-inv-efunc-zp1 0.0 redshift 1000)))
+;;     (* DH int)))
 
 (defun cosmo-los-comoving-distance ()
   "Display line-of-sight comoving distance in mini-buffer."
@@ -288,6 +258,40 @@ Example:
   (let ((z (cosmo--read-param "redshift")))
     (message (format "%s Mpc"
                      (cosmo-get-transverse-comoving-distance z)))))
+
+(defun cosmo-get-angular-diameter-distance (redshift)
+  "Angular diameter distance [Mpc] for Lambda-CDM at a given REDSHIFT."
+  (let* ((DM (cosmo-get-transverse-comoving-distance redshift)))
+    (/ DM (1+ redshift))))
+
+(defun cosmo-angular-diameter-distance ()
+  "Display angular diameter distance in mini-buffer."
+  (interactive)
+  (let ((z (cosmo--read-param "redshift")))
+    (message (format "%s Mpc"
+                     (cosmo-get-angular-diameter-distance z)))))
+
+(defun cosmo-get-luminosity-distance (redshift)
+  "Luminosity distance [Mpc] for Lambda-CDM at a given REDSHIFT."
+  (let* ((DM (cosmo-get-transverse-comoving-distance redshift)))
+    (* DM (1+ redshift))))
+
+(defun cosmo-luminosity-distance ()
+  "Display luminosity distance in mini-buffer."
+  (interactive)
+  (let ((z (cosmo--read-param "redshift")))
+    (message (format "%s Mpc"
+                     (cosmo-get-luminosity-distance z)))))
+
+(defun cosmo-get-hubble-time ()
+  "Hubble time 1/H0 [yr] for Lambda-CDM."
+  (let ((H0 (gethash "H0 [Km/s/Mpc]" cosmo--params)))
+    (/ 9.78e11 H0)))
+
+(defun cosmo-hubble-time ()
+  "Display Hubble distance 1/H0 [yr] in mini-buffer."
+  (interactive)
+  (message (format "%s yr" (cosmo-get-hubble-time))))
 
 ;;; Handle output.
 
