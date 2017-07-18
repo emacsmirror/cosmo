@@ -70,7 +70,7 @@
 ;; - Consider using Calc as a library for quadrature, special
 ;;   functions (sinh) and maybe to plot.
 ;;
-;; - Implement function cosmo-pedia providing fast reference to basic
+;; - Improve function cosmo-pedia providing fast reference to basic
 ;;   equations (e.g., relation among different distances) and units
 ;;   (e.g., H0 in 1/Mpc and km/s/Mpc, cm <--> Mpc, ...).
 ;;
@@ -351,11 +351,21 @@ Argument LOS-DIST line-of-sight comoving distance at given redshift."
          (orel (gethash "orel" cosmo--params))
          (H0 (gethash "H0 [Km/s/Mpc]" cosmo--params))
          (hubble (cosmo-get-hubble redshift))
-         (los-dist (cosmo-get-los-comoving-distance redshift))
-)
+         (los-dist (cosmo-get-los-comoving-distance redshift)))
     (with-output-to-temp-buffer cosmo-buffer
       (pop-to-buffer cosmo-buffer)
       (cosmo--write-calc redshift H0 omatter olambda orel hubble los-dist))))
+
+(defun cosmo-pedia ()
+  "Display a reference to basic cosmological definitions."
+  (interactive)
+  (let* ((cosmo-buffer "*Cosmopedia*"))
+    (with-output-to-temp-buffer cosmo-buffer
+      (pop-to-buffer cosmo-buffer)
+      (insert "* Distances relations\n\n")
+      (insert "  Comoving distance (transverse): D_M\n")
+      (insert "  Angular diameter distance: D_A = D_M / (1+z)\n")
+      (insert "  Luminosity distance: D_L = (1+z) D_M = (1+z)^2 D_A\n"))))
 
 ;;; Unit test.
 
