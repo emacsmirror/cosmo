@@ -44,7 +44,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   - redshift :: Gravitational redshift of photons frequency due to the
                 expansion of the Universe.
 
-  Definitions follow Hogg (1999) [[[https://arxiv.org/abs/astro-ph/9905116][arXiv:astro-ph/9905116]]].
+  Definitions follow Hogg (1999) [[[https://arxiv.org/abs/astro-ph/9905116][arXiv:astro-ph/9905116]]]. The
+  =cosmo-pedia= command is based on [[http://fiteoweb.unige.ch/~durrer/Book.html][Durrer (2008)]].
 
 * Download
 
@@ -103,6 +104,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        #+END_EXAMPLE
 
   - cosmo-hubble :: Display Hubble parameter in mini-buffer.
+
+  - cosmo-pedia :: Display a reference to basic cosmological
+                   definitions (see [[http://fiteoweb.unige.ch/~durrer/Book.html][Durrer (2008)]]). (For a nice
+                   view, set the buffer mode to =org-mode=.)
 
   - cosmo-set-params :: Change the values of cosmological parameters.
 

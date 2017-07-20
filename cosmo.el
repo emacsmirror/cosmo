@@ -70,10 +70,6 @@
 ;; - Consider using Calc as a library for quadrature, special
 ;;   functions (sinh) and maybe to plot.
 ;;
-;; - Improve function cosmo-pedia providing fast reference to basic
-;;   equations (e.g., relation among different distances) and units
-;;   (e.g., H0 in 1/Mpc and km/s/Mpc, cm <--> Mpc, ...).
-;;
 ;; - Suggest default parameters when reading them with the related
 ;;   command; set the to default values if none is entered.
 
@@ -356,16 +352,31 @@ Argument LOS-DIST line-of-sight comoving distance at given redshift."
       (pop-to-buffer cosmo-buffer)
       (cosmo--write-calc redshift H0 omatter olambda orel hubble los-dist))))
 
+
+;;; Cosmopedia
+
 (defun cosmo-pedia ()
   "Display a reference to basic cosmological definitions."
   (interactive)
   (let* ((cosmo-buffer "*Cosmopedia*"))
     (with-output-to-temp-buffer cosmo-buffer
       (pop-to-buffer cosmo-buffer)
-      (insert "* Distances relations\n\n")
-      (insert "  Comoving distance (transverse): D_M\n")
-      (insert "  Angular diameter distance: D_A = D_M / (1+z)\n")
-      (insert "  Luminosity distance: D_L = (1+z) D_M = (1+z)^2 D_A\n"))))
+      (insert
+       "* Distances relations\n\n"
+       "  - D_M :: Comoving distance (transverse).\n"
+       "  - D_A = D_M / (1+z) :: Angular diameter distance.\n"
+       "  - D_L = (1+z) D_M = (1+z)^2 D_A :: Luminosity distance.\n\n"
+       "* Conversion factors, units\n\n"
+       "  *Units system*: hbar = c = k_Boltzmann = 1.\n\n"
+       "  - 1 pc = 3.2612 light years = 3.0856e18 cm\n"
+       "  - 1 Mpc = 1e6pc ~ 3e24 cm ~ 1e14 s\n\n"
+       "* Important constants\n\n"
+       "  - Hubble constant :: H0 = 100h km/s/Mpc\n"
+       "                          = 2.1332e-42 h GeV\n"
+       "  - Hubble time, distance :: 1/H0 = 3.0856e17/h s\n"
+       "                                  = 9.7776e9/h yr\n"
+       "                                  = 2997.9/h Mpc\n"
+       "                                  = 9.2503e27/h cm\n"))))
 
 ;;; Unit test.
 
