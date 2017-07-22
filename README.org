@@ -22,8 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 * Description
 
-  *Easily compute cosmological quantities from the Emacs text
-  editor.*
+  */Easily compute cosmological quantities from the Emacs text
+  editor./*
 
   This package provides a cosmological calculator for Lambda-CDM
   models. Such a framework describes a homogeneous and isotropic
@@ -114,7 +114,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   - cosmo-hubble-distance :: Display Hubble distance c/H0 [Mpc]
        in mini-buffer.
 
-  - cosmo-hubble-time :: Display Hubble distance 1/H0 [yr] in
+  - cosmo-hubble-time :: Display Hubble distance 1/H0 [Gyr] in
        mini-buffer.
 
   - cosmo-los-comoving-distance :: Display line-of-sight comoving
@@ -124,8 +124,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        mini-buffer.
 
   - cosmo-pedia :: Display a reference to basic cosmological
-                   definitions (see [[http://fiteoweb.unige.ch/~durrer/Book.html][Durrer (2008)]]). (For a nice
-                   view, set the buffer mode to =org-mode=.)
+                   definitions (see [[http://fiteoweb.unige.ch/~durrer/Book.html][Durrer (2008)]]).
 
   - cosmo-set-params :: Change the values of cosmological parameters.
 
