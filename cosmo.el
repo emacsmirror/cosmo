@@ -277,15 +277,23 @@ Example:
     (insert (propertize help 'font-lock-face 'italic))
     (insert head)))
 
-(defun cosmo--write-calc (redshift H0 omatter olambda orel hubble los-dist)
+(defun cosmo--write-calc (redshift H0 omatter olambda orel
+                         hubble-distance hubble-time hubble
+                         los-dist transverse-dist luminosity-dist
+                         angular-dist)
   "Format and insert cosmological table in buffer.
 Argument REDSHIFT redshift.
 Argument H0 Hubble parameter today.
 Argument OMATTER matter density parameter.
 Argument OLAMBDA cosmological constant density parameter.
 Argument OREL density parameter.
+Argument HUBBLE-DISTANCE Hubble distance
+Argument HUBBLE-TIME Hubble time
 Argument HUBBLE Hubble parameter at given redshift.
-Argument LOS-DIST line-of-sight comoving distance at given redshift."
+Argument LOS-DIST line-of-sight comoving distance at given redshift.
+Argument TRANSVERSE-DIST transverse comoving distance at given redshift.
+Argument LUMINOSITY-DIST luminosity distance at given redshift.
+Argument ANGULAR-DIST angular diameter distance at given redshift."
   ;; Input parameters.
   (cosmo--write-calc-header)
   (insert "Input Parameters\n"
@@ -306,6 +314,10 @@ Argument LOS-DIST line-of-sight comoving distance at given redshift."
           "------------------\n"
           (format "- Curvature fractional density: %s\n"
                   (cosmo-get-ocurvature))
+          (format "- Hubble distance [Mpc]: %s\n"
+                  (cosmo-get-hubble-distance))
+          (format "- Hubble time [Gyr]: %s\n"
+                  (cosmo-get-hubble-time))
           "\n")
   ;; Cosmological functions.
   (insert "Cosmography at required redshift\n"
@@ -313,7 +325,13 @@ Argument LOS-DIST line-of-sight comoving distance at given redshift."
           (format "- Hubble parameter [km/s/Mpc]:           %s\n"
                   hubble)
           (format "- Line-of-sight comoving distance [Mpc]: %s\n"
-                  los-dist))
+                  los-dist)
+          (format "- Transverse comoving distance [Mpc]: %s\n"
+                  transverse-dist)
+          (format "- Luminosity distance [Mpc]: %s\n"
+                  luminosity-dist)
+          (format "- Angular diameter distance [Mpc]: %s\n"
+                  angular-dist))
   nil)
 
 (defun cosmo-calculator ()
@@ -325,11 +343,19 @@ Argument LOS-DIST line-of-sight comoving distance at given redshift."
          (olambda (gethash "olambda" cosmo--params))
          (orel (gethash "orel" cosmo--params))
          (H0 (gethash "H0 [Km/s/Mpc]" cosmo--params))
+         (hubble-distance (cosmo-get-hubble-distance))
+         (hubble-time (cosmo-get-hubble-time))
          (hubble (cosmo-get-hubble redshift))
-         (los-dist (cosmo-get-los-comoving-distance redshift)))
+         (los-dist (cosmo-get-los-comoving-distance redshift))
+         (transverse-dist (cosmo-get-transverse-comoving-distance redshift))
+         (luminosity-dist (cosmo-get-luminosity-distance redshift))
+         (angular-dist (cosmo-get-angular-diameter-distance redshift)))
     (with-output-to-temp-buffer cosmo-buffer
       (pop-to-buffer cosmo-buffer)
-      (cosmo--write-calc redshift H0 omatter olambda orel hubble los-dist))))
+      (cosmo--write-calc redshift H0 omatter olambda orel
+                         hubble-distance hubble-time hubble
+                         los-dist transverse-dist luminosity-dist
+                         angular-dist))))
 
 
 ;;; Cosmopedia
