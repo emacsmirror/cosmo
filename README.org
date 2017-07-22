@@ -22,7 +22,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 * Description
 
-  This package provides a cosmological calculator Lambda-CDM
+  *Easily compute cosmological quantities from the Emacs text
+  editor.*
+
+  This package provides a cosmological calculator for Lambda-CDM
   models. Such a framework describes a homogeneous and isotropic
   universe containing a cosmological constant (Lambda) and a Cold
   Dark Matter (CDM) component, besides ordinary species. The
@@ -83,6 +86,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   # List all interactive commands:
   #   (apropos-command "cosmo-")
 
+  - cosmo-angular-diameter-distance :: Display angular diameter
+       distance in mini-buffer.
+
   - cosmo-calculator :: Compute cosmology and display summary
        table in a new buffer. The following illustrates a
        possible output (similar to Gnuastro =astcosmiccal=
@@ -105,17 +111,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   - cosmo-hubble :: Display Hubble parameter in mini-buffer.
 
+  - cosmo-hubble-distance :: Display Hubble distance c/H0 [Mpc]
+       in mini-buffer.
+
+  - cosmo-hubble-time :: Display Hubble distance 1/H0 [yr] in
+       mini-buffer.
+
+  - cosmo-los-comoving-distance :: Display line-of-sight comoving
+       distance in mini-buffer.
+
+  - cosmo-luminosity-distance :: Display luminosity distance in
+       mini-buffer.
+
   - cosmo-pedia :: Display a reference to basic cosmological
                    definitions (see [[http://fiteoweb.unige.ch/~durrer/Book.html][Durrer (2008)]]). (For a nice
                    view, set the buffer mode to =org-mode=.)
 
   - cosmo-set-params :: Change the values of cosmological parameters.
 
-  A complete list of interactive commands can be obtained by typing
-  =M-x cosmo- TAB=. Documentation is available through
+  - cosmo-transverse-comoving-distance :: Display transverse
+       comoving distance in mini-buffer.
+
+  The complete list of interactive commands can be obtained by
+  typing =M-x cosmo- TAB=. Documentation is available through
   =C-h f cosmo-command=, where =command= should be adapted to the
-  particular command. Definitions follow Hogg 1999
-  ([[https://arxiv.org/abs/astro-ph/9905116][arXiv:astro-ph/9905116]]).
+  particular command.
 
 * Support
 
@@ -123,12 +143,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   see [[http://www.chiark.greenend.org.uk/~sgtatham/bugs.html][this page]] about how to report bugs effectively.
 
 * Contributing
-
-  /The project is still at an early stage/. Recommendations (and
-  contributions) aimed to improve the source code are highly
-  appreciated. New feature suggestions are also welcome, but at this
-  point priority will be given to reach an idiomatic and extensible
-  code.
 
   Contributions can be submitted as patches. See [[http://orgmode.org/worg/org-contribute.html#patches][this page]] for an
   example of good patches contributions.
