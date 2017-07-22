@@ -424,6 +424,12 @@ Argument OREL relativistic density parameter today."
     (puthash "orel" orel cosmo--params)
     nil)
 
+  (defmacro cosmo-measure-time (&rest body)
+    "Measure the time it takes to evaluate BODY."
+    `(let ((time (current-time)))
+       ,@body
+       (message "%.06f seconds" (float-time (time-since time)))))
+
   ;; Tests independent of cosmology.
 
   (defun cosmo-test-string-number-p ()
@@ -515,27 +521,26 @@ Argument OREL relativistic density parameter today."
 
   (cosmo-test-transverse-comoving-distance-flat)
 
+
+  ;; Benchmarks: numerical integral.
+  ;; (cosmo-test-set-default 70.0 0.31 0.7 8.52444340102e-05) ; Open
+  ;; (cosmo-measure-time (cosmo-get-angular-diameter-distance 0.1))
+  ;; (cosmo-measure-time (cosmo-get-angular-diameter-distance 1000.0))
+
+  ;; (cosmo-test-set-default 70.0 0.27 0.7 8.52444340102e-05) ; Close
+  ;; (cosmo-measure-time (cosmo-get-angular-diameter-distance 0.1))
+  ;; (cosmo-measure-time (cosmo-get-angular-diameter-distance 1000.0))
+
+  ;; (cosmo-test-set-default 70.0 0.3 0.7 0.0) ; Flat
+  ;; (cosmo-measure-time (cosmo-get-angular-diameter-distance 0.1))
+  ;; (cosmo-measure-time (cosmo-get-angular-diameter-distance 1000.0))
+
+  ;; Benchmarks: hyperbolic sine.
+  ;; (cosmo-measure-time (cosmo-sinh 0.5))
+  ;; (cosmo-measure-time (calc-eval "sinh(0.5)"))
+  ;; (cosmo-measure-time (calcFunc-sinh '(float 5 -1)))
   )
 
-
-;;; Benchmarks
-
-(eval-when-compile
-
-  (defmacro cosmo-measure-time (&rest body)
-    "Measure the time it takes to evaluate BODY."
-    `(let ((time (current-time)))
-       ,@body
-       (message "%.06f seconds" (float-time (time-since time)))))
-
-  ;; Numerical integral.
-  (cosmo-measure-time (cosmo-get-angular-diameter-distance 0.1))
-  (cosmo-measure-time (cosmo-get-angular-diameter-distance 1000.0))
-
-  ;; Hyperbolic sine.
-  (cosmo-measure-time (cosmo-sinh 0.5))
-  (cosmo-measure-time (calc-eval "sinh(0.5)"))
-  (cosmo-measure-time (calcFunc-sinh '(float 5 -1))))
 
 (provide 'cosmo)
 
