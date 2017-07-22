@@ -59,7 +59,7 @@
 
 ;;; Todo:
 
-;; - Add all distances from Hogg 1999.
+;; In priority order:
 ;;
 ;; - Simpson's rule performs well for standard cosmologies and for z <
 ;;   1000. If non-standard cosmologies or very large redshifts are
@@ -69,6 +69,12 @@
 ;;
 ;; - Consider using Calc as a library for quadrature, special
 ;;   functions (sinh) and maybe to plot.
+;;
+;; - Refactor tests, now the code is too cumbersome and repetitive.
+;;
+;; - Extend cosmo-pedia.
+;;
+;; - Add all quantities from Hogg 1999.
 ;;
 ;; - Suggest default parameters when reading them with the related
 ;;   command; set the to default values if none is entered.
@@ -201,6 +207,16 @@ Example:
   (interactive)
   (message (format "%s Mpc" (cosmo-get-hubble-distance))))
 
+(defun cosmo-get-hubble-time ()
+  "Hubble time 1/H0 [Gyr] for Lambda-CDM."
+  (let ((H0 (gethash "H0 [Km/s/Mpc]" cosmo--params)))
+    (/ 9.78e2 H0)))
+
+(defun cosmo-hubble-time ()
+  "Display Hubble distance 1/H0 [yr] in mini-buffer."
+  (interactive)
+  (message (format "%s Gyr" (cosmo-get-hubble-time))))
+
 (defun cosmo-get-los-comoving-distance (redshift)
   "Line-of-sight comoving distance [Mpc] for Lambda-CDM at a given REDSHIFT."
   (let ((DH (cosmo-get-hubble-distance))
@@ -258,16 +274,6 @@ Example:
     (message (format "%s Mpc"
                      (cosmo-get-luminosity-distance z)))))
 
-(defun cosmo-get-hubble-time ()
-  "Hubble time 1/H0 [Gyr] for Lambda-CDM."
-  (let ((H0 (gethash "H0 [Km/s/Mpc]" cosmo--params)))
-    (/ 9.78e2 H0)))
-
-(defun cosmo-hubble-time ()
-  "Display Hubble distance 1/H0 [yr] in mini-buffer."
-  (interactive)
-  (message (format "%s Gyr" (cosmo-get-hubble-time))))
-
 ;;; Handle output.
 
 (defun cosmo--write-calc-header ()
@@ -277,18 +283,15 @@ Example:
     (insert (propertize help 'font-lock-face 'italic))
     (insert head)))
 
-(defun cosmo--write-calc (redshift H0 omatter olambda orel
-                         hubble-distance hubble-time hubble
-                         los-dist transverse-dist luminosity-dist
-                         angular-dist)
+(defun cosmo--write-calc (redshift H0 omatter olambda orel hubble
+                                   los-dist transverse-dist
+                                   luminosity-dist angular-dist)
   "Format and insert cosmological table in buffer.
 Argument REDSHIFT redshift.
 Argument H0 Hubble parameter today.
 Argument OMATTER matter density parameter.
 Argument OLAMBDA cosmological constant density parameter.
 Argument OREL density parameter.
-Argument HUBBLE-DISTANCE Hubble distance
-Argument HUBBLE-TIME Hubble time
 Argument HUBBLE Hubble parameter at given redshift.
 Argument LOS-DIST line-of-sight comoving distance at given redshift.
 Argument TRANSVERSE-DIST transverse comoving distance at given redshift.
@@ -343,8 +346,6 @@ Argument ANGULAR-DIST angular diameter distance at given redshift."
          (olambda (gethash "olambda" cosmo--params))
          (orel (gethash "orel" cosmo--params))
          (H0 (gethash "H0 [Km/s/Mpc]" cosmo--params))
-         (hubble-distance (cosmo-get-hubble-distance))
-         (hubble-time (cosmo-get-hubble-time))
          (hubble (cosmo-get-hubble redshift))
          (los-dist (cosmo-get-los-comoving-distance redshift))
          (transverse-dist (cosmo-get-transverse-comoving-distance redshift))
@@ -352,8 +353,7 @@ Argument ANGULAR-DIST angular diameter distance at given redshift."
          (angular-dist (cosmo-get-angular-diameter-distance redshift)))
     (with-output-to-temp-buffer cosmo-buffer
       (pop-to-buffer cosmo-buffer)
-      (cosmo--write-calc redshift H0 omatter olambda orel
-                         hubble-distance hubble-time hubble
+      (cosmo--write-calc redshift H0 omatter olambda orel hubble
                          los-dist transverse-dist luminosity-dist
                          angular-dist))))
 
@@ -388,6 +388,8 @@ Argument ANGULAR-DIST angular diameter distance at given redshift."
 (eval-when-compile
   (require 'cl)
 
+  ;; Test utilities.
+
   (defun cosmo-and-reduce (seq)
     "Reduce sequence SEQ by applying the `and` special form."
     (reduce #'(lambda (x y) (and x y)) seq))
@@ -398,7 +400,21 @@ Argument ANGULAR-DIST angular diameter distance at given redshift."
     ;; be specified and the largest one is considered.
     "Return t if the two numbers differ by less than ABSTOL."
     (or reltol (setq reltol 1e-8))       ; Default relative tolerance
-      (> reltol (abs (1- (/ num1 num2)))))
+    (> reltol (abs (1- (/ num1 num2)))))
+
+  (defun cosmo-test-set-default (H0 omatter olambda orel)
+    "Set default test cosmological parameters.
+Argument H0 Hubble parameter [Km/s/Mpc].
+Argument OMATTER matter density parameter today.
+Argument OLAMBDA cosmological constant density parameter.
+Argument OREL relativistic density parameter today."
+    (puthash "H0 [Km/s/Mpc]" H0 cosmo--params)
+    (puthash "omatter" omatter cosmo--params)
+    (puthash "olambda" olambda cosmo--params)
+    (puthash "orel" orel cosmo--params)
+    nil)
+
+  ;; Tests independent of cosmology.
 
   (defun cosmo-test-string-number-p ()
     "Test string representing numbers."
@@ -412,13 +428,12 @@ Argument ANGULAR-DIST angular diameter distance at given redshift."
       (assert
        (not (cosmo-and-reduce (mapcar #'cosmo--string-number-p notnumbers))))))
 
-  (defun cosmo-test-set-default ()
-    "Set default test cosmological parameters."
-        (puthash "H0 [Km/s/Mpc]" 70.0 cosmo--params)
-        (puthash "omatter" 0.31 cosmo--params)
-        (puthash "olambda" 0.7 cosmo--params)
-        (puthash "orel" 8.52444340102e-05 cosmo--params)
-        nil)
+  (cosmo-test-string-number-p)
+  (cosmo-test-string-notnumber-p)
+
+  ;; Open cosmology.
+
+  (cosmo-test-set-default 70.0 0.31 0.7 8.52444340102e-05)
 
   (defun cosmo-test-efunc ()
     (assert (cosmo-almost-eq (cosmo-efunc 1000.0) 19912.4772226 1e-3)))
@@ -439,7 +454,7 @@ Argument ANGULAR-DIST angular diameter distance at given redshift."
     (assert (cosmo-almost-eq
              (cosmo-get-los-comoving-distance 1000.0) 13454.7229832 1e-3)))
 
-  (defun cosmo-test-transverse-comoving-distance ()
+  (defun cosmo-test-transverse-comoving-distance-open ()
     (assert (cosmo-almost-eq
              (cosmo-get-transverse-comoving-distance 1000.0)
              13232.6210034 1e-3)))
@@ -452,18 +467,45 @@ Argument ANGULAR-DIST angular diameter distance at given redshift."
     (assert (cosmo-almost-eq
              (cosmo-get-angular-diameter-distance 1000.0) 13.2194016018 1e-3)))
 
-  (cosmo-test-string-number-p)
-  (cosmo-test-string-notnumber-p)
-  (cosmo-test-set-default)
   (cosmo-test-efunc)
   (cosmo-test-inv-efunc)
   (cosmo-test-hubble)
   (cosmo-test-hubble-distance)
   (cosmo-test-hubble-time)
   (cosmo-test-los-comoving-distance)
-  (cosmo-test-transverse-comoving-distance)
+  (cosmo-test-transverse-comoving-distance-open)
   (cosmo-test-luminosity-distance)
-  (cosmo-test-angular-diameter-distance))
+  (cosmo-test-angular-diameter-distance)
+
+  ;; Close cosmology.
+
+  (cosmo-test-set-default 70.0 0.27 0.7 8.52444340102e-05)
+
+  (defun cosmo-test-transverse-comoving-distance-close ()
+    ;; If the transverse comoving distance passes this test, and the
+    ;; other functions already passed the open cosmology test, then
+    ;; they are also consistent with a close cosmology. This is
+    ;; because different curvature were coded in the transverse
+    ;; distance, and other distances are defined as functions of
+    ;; this one.
+    (assert (cosmo-almost-eq
+             (cosmo-get-transverse-comoving-distance 1000.0)
+             14832.933576 1e-3)))
+
+  (cosmo-test-transverse-comoving-distance-close)
+
+  ;; Flat cosmology.
+
+  (cosmo-test-set-default 70.0 0.3 0.7 0.0)
+
+  (defun cosmo-test-transverse-comoving-distance-flat ()
+    (assert (cosmo-almost-eq
+             (cosmo-get-transverse-comoving-distance 1000.0)
+             13660.5292969 1e-3)))
+
+  (cosmo-test-transverse-comoving-distance-flat))
+
+
 
 (provide 'cosmo)
 

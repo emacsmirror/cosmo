@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+from astropy.cosmology import FlatLambdaCDM
 from astropy.cosmology import LambdaCDM
 import numpy as np
 
@@ -67,5 +68,38 @@ def print_open_cosmo():
     print_curves(redshifts, cosmo)
 
 
+def print_close_cosmo():
+    """Print cosmological functions for a close cosmology."""
+    H0 = 70.
+    Om0 = 0.27
+    Ode0 = 0.7
+    cosmo = LambdaCDM(H0=H0, Om0=Om0, Ode0=Ode0)
+
+    print('* Close cosmology:')
+    print('H0={} [km/s/Mpc], Om0={}, Ode0={}, Orel0={}, Ok0={}\n'
+          .format(H0, Om0, Ode0, cosmo.Ogamma(0.)+cosmo.Onu(0.),
+                  cosmo.Ok(0.)))
+
+    redshifts = (0., 0.1, 10., 1000.)
+    print_curves(redshifts, cosmo)
+
+
+def print_flat_cosmo():
+    """Print cosmological functions for a flat cosmology."""
+    H0 = 70.
+    Om0 = 0.3
+    cosmo = FlatLambdaCDM(H0=H0, Om0=Om0, Tcmb0=0.)
+
+    print('* Flat cosmology:')
+    print('H0={} [km/s/Mpc], Om0={}, Ode0={}, Orel0={}, Ok0={}\n'
+          .format(H0, Om0, cosmo.Ode(0.), cosmo.Ogamma(0.)+cosmo.Onu(0.),
+                  cosmo.Ok(0.)))
+
+    redshifts = (0., 0.1, 10., 1000.)
+    print_curves(redshifts, cosmo)
+
+
 if __name__ == '__main__':
     print_open_cosmo()
+    print_close_cosmo()
+    print_flat_cosmo()
