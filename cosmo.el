@@ -26,9 +26,9 @@
 ;;; Commentary:
 
 ;; This package provides a cosmological calculator Lambda-CDM
-;; models. Such a framework describes a homogeneous and isotropic
+;; models.  Such a framework describes a homogeneous and isotropic
 ;; universe containing a cosmological constant (Lambda) and a Cold
-;; Dark Matter (CDM) component, besides ordinary species. The
+;; Dark Matter (CDM) component, besides ordinary species.  The
 ;; model is characterized by the following parameters:
 ;;
 ;; - H_0 :: Hubble parameter (expansion rate) today
@@ -36,7 +36,7 @@
 ;; - Omega_Lambda :: Cosmological constant density parameter.
 ;; - Omega_r0 :: Relativistic species (e.g., photons plus
 ;;               neutrinos) density parameter today.
-;; - Omega_k0 :: Curvature density parameter today. This
+;; - Omega_k0 :: Curvature density parameter today.  This
 ;;               parameter is derived from the others above
 ;;               according to Friedmann's equation
 ;;               =Omega_m0 + Omega_Lambda + Omega_r0 + Omega_k0 = 1=.
@@ -367,14 +367,24 @@ Argument ANGULAR-DIST angular diameter distance at given redshift."
     (with-output-to-temp-buffer cosmo-buffer
       (pop-to-buffer cosmo-buffer)
       (insert
+       "(`q` to quite)\n\n"
+       "  _Units system_: hbar = c = k_Boltzmann = 1.\n\n"
        "* Distances relations\n\n"
-       "  - D_M :: Comoving distance (transverse).\n"
-       "  - D_A = D_M / (1+z) :: Angular diameter distance.\n"
-       "  - D_L = (1+z) D_M = (1+z)^2 D_A :: Luminosity distance.\n\n"
+       "  - Comoving distance (transverse) :: D_M\n"
+       "  - Angular diameter distance :: D_A = D_M / (1+z)\n"
+       "  - Luminosity distance :: D_L = (1+z) D_M = (1+z)^2 D_A\n\n"
        "* Conversion factors, units\n\n"
-       "  *Units system*: hbar = c = k_Boltzmann = 1.\n\n"
-       "  - 1 pc = 3.2612 light years = 3.0856e18 cm\n"
-       "  - 1 Mpc = 1e6pc ~ 3e24 cm ~ 1e14 s\n\n"
+       "  - 1GeV = 1.6022e-3 erg\n"
+       "         = 1.1605e13 K\n"
+       "         = 1.7827e-24 g\n"
+       "         = 5.0684e13 1/cm\n"
+       "         = 1.5192 1/s\n"
+       "  - 1 pc = 3.2612 light years\n"
+       "         = 3.0856e18 cm\n"
+       "  - 1 Mpc = 1e6pc ~ 3e24 cm ~ 1e14 s\n"
+       "  - 1 AU = 1.4960e13 cm\n"
+       "  - 1 Jy = 1e-23 erg/cm^2/s/Hz\n"
+       "         = 2.4730e-48 GeV^3\n\n"
        "* Important constants\n\n"
        "  - Hubble constant :: H0 = 100h km/s/Mpc\n"
        "                          = 2.1332e-42 h GeV\n"
