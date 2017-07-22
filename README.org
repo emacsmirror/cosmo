@@ -22,8 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 * Description
 
-  */Easily compute cosmological quantities from the Emacs text
-  editor./*
+  /Easily compute cosmological quantities from the Emacs text
+  editor./
 
   This package provides a cosmological calculator for Lambda-CDM
   models. Such a framework describes a homogeneous and isotropic
@@ -61,7 +61,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 * Installation
 
-  Copy the =cosmo.el= file into your Emacs configuration
+  This program is meant to work with the [[https://www.gnu.org/software/emacs/][Emacs]] text editor. Copy
+  the =cosmo.el= file into your Emacs configuration
   directory. E.g., on GNU systems:
 
   #+BEGIN_SRC shell
@@ -80,8 +81,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 * Usage
 
-  Open Emacs and type =M-x cosmo-command=,[fn:1] where the =command= name
-  varies depending on the desired computation:
+  Open Emacs and type =M-x cosmo-command=,[fn:1] where the
+  =command= name varies depending on the desired computation:
 
   # List all interactive commands:
   #   (apropos-command "cosmo-")

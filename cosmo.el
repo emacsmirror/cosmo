@@ -513,9 +513,29 @@ Argument OREL relativistic density parameter today."
              (cosmo-get-transverse-comoving-distance 1000.0)
              13660.5292969 1e-3)))
 
-  (cosmo-test-transverse-comoving-distance-flat))
+  (cosmo-test-transverse-comoving-distance-flat)
+
+  )
 
 
+;;; Benchmarks
+
+(eval-when-compile
+
+  (defmacro cosmo-measure-time (&rest body)
+    "Measure the time it takes to evaluate BODY."
+    `(let ((time (current-time)))
+       ,@body
+       (message "%.06f seconds" (float-time (time-since time)))))
+
+  ;; Numerical integral.
+  (cosmo-measure-time (cosmo-get-angular-diameter-distance 0.1))
+  (cosmo-measure-time (cosmo-get-angular-diameter-distance 1000.0))
+
+  ;; Hyperbolic sine.
+  (cosmo-measure-time (cosmo-sinh 0.5))
+  (cosmo-measure-time (calc-eval "sinh(0.5)"))
+  (cosmo-measure-time (calcFunc-sinh '(float 5 -1))))
 
 (provide 'cosmo)
 
