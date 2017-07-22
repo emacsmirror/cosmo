@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   Dark Matter (CDM) component, besides ordinary species. The
   model is characterized by the following parameters:
 
-  - H_0 :: Hubble parameter (expansion rate) today
+  - H_0 :: Hubble parameter (expansion rate) today.
   - Omega_m0 :: Matter density parameter today.
   - Omega_Lambda :: Cosmological constant density parameter.
   - Omega_r0 :: Relativistic species (e.g., photons plus
@@ -48,7 +48,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 expansion of the Universe.
 
   Definitions follow Hogg (1999) [[[https://arxiv.org/abs/astro-ph/9905116][arXiv:astro-ph/9905116]]]. The
-  =cosmo-pedia= command is based on [[http://fiteoweb.unige.ch/~durrer/Book.html][Durrer (2008)]].
+  =cosmo-pedia= command is based on [[http://fiteoweb.unige.ch/~durrer/Book.html][Durrer (2008)]]. The
+  =cosmo-calculator= command is based on Gnuastro =astcosmiccal=
+  program (v0.2).
 
 * Download
 
@@ -92,8 +94,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   - cosmo-calculator :: Compute cosmology and display summary
        table in a new buffer. The following illustrates a
-       possible output (similar to Gnuastro =astcosmiccal=
-       program, v0.2):
+       possible output:
        #+BEGIN_EXAMPLE
        Cosmology calculator.
 
@@ -125,7 +126,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        mini-buffer.
 
   - cosmo-pedia :: Display a reference to basic cosmological
-                   definitions (see [[http://fiteoweb.unige.ch/~durrer/Book.html][Durrer (2008)]]).
+                   definitions.
 
   - cosmo-set-params :: Change the values of cosmological parameters.
 

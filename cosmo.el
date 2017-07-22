@@ -64,11 +64,10 @@
 ;; - Simpson's rule performs well for standard cosmologies and for z <
 ;;   1000. If non-standard cosmologies or very large redshifts are
 ;;   required, more steps may be required. They should be set
-;;   automatically, the user should only pass a max number of
-;;   steps.
+;;   automatically (the user should only pass a max number of steps)
+;;   or an error should be shown if the result does not converge.
 ;;
-;; - Consider using Calc as a library for quadrature, special
-;;   functions (sinh) and maybe to plot.
+;; - Consider using Calc as a library for quadrature, and maybe to plot.
 ;;
 ;; - Refactor tests, now the code is too cumbersome and repetitive.
 ;;
