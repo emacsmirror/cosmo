@@ -180,21 +180,6 @@ Example:
   "Inverse E(z) function at a given REDSHIFT."
   (/ 1.0 (cosmo-efunc redshift)))
 
-;; (defun cosmo-efunc-zp1 (zp1)
-;;   "E(z+1) function at a given ZP1 (redshift+1) value."
-;;   (let ((omatter (gethash "omatter" cosmo--params))
-;;         (olambda (gethash "olambda" cosmo--params))
-;;         (orel (gethash "orel" cosmo--params))
-;;         (ocurvature (cosmo-get-ocurvature)))
-;;     (sqrt (+ (* orel (expt zp1 4.0))
-;;              (* omatter (expt zp1 3.0))
-;;              (* ocurvature (expt zp1 2.0))
-;;              olambda))))
-
-;; (defun cosmo-inv-efunc-zp1 (zp1)
-;;   "Inverse E(1+z) function at a given ZP1 (redshift+1)."
-;;   (/ 1.0 (cosmo-efunc zp1)))
-
 (defun cosmo-get-hubble (redshift)
   "Hubble parameter [Km/s/Mpc] for Lambda-CDM at a given REDSHIFT."
   (let ((H0 (gethash "H0 [Km/s/Mpc]" cosmo--params)))
@@ -221,12 +206,6 @@ Example:
   (let ((DH (cosmo-get-hubble-distance))
         (int (cosmo-simps #'cosmo-inv-efunc 0.0 redshift 1000)))
     (* DH int)))
-
-;; (defun cosmo-get-los-comoving-distance (redshift)
-;;   "Line-of-sight comoving distance [Mpc] for Lambda-CDM at a given REDSHIFT."
-;;   (let ((DH (cosmo-get-hubble-distance))
-;;         (int (cosmo-simps #'cosmo-inv-efunc-zp1 0.0 redshift 1000)))
-;;     (* DH int)))
 
 (defun cosmo-los-comoving-distance ()
   "Display line-of-sight comoving distance in mini-buffer."
@@ -280,14 +259,14 @@ Example:
                      (cosmo-get-luminosity-distance z)))))
 
 (defun cosmo-get-hubble-time ()
-  "Hubble time 1/H0 [yr] for Lambda-CDM."
+  "Hubble time 1/H0 [Gyr] for Lambda-CDM."
   (let ((H0 (gethash "H0 [Km/s/Mpc]" cosmo--params)))
-    (/ 9.78e11 H0)))
+    (/ 9.78e2 H0)))
 
 (defun cosmo-hubble-time ()
   "Display Hubble distance 1/H0 [yr] in mini-buffer."
   (interactive)
-  (message (format "%s yr" (cosmo-get-hubble-time))))
+  (message (format "%s Gyr" (cosmo-get-hubble-time))))
 
 ;;; Handle output.
 
@@ -409,30 +388,56 @@ Argument LOS-DIST line-of-sight comoving distance at given redshift."
 
   (defun cosmo-test-set-default ()
     "Set default test cosmological parameters."
-        (puthash "H0 [Km/s/Mpc]" 70.0 cosmo--params) ; Hubble today km/s/Mpc
-        (puthash "omatter" 0.3 cosmo--params) ; Matter density today
-        (puthash "olambda" 0.7 cosmo--params) ; Curvature density today
-        (puthash "orel" 8.5e-05 cosmo--params)) ; Relativisitc density today
+        (puthash "H0 [Km/s/Mpc]" 70.0 cosmo--params)
+        (puthash "omatter" 0.31 cosmo--params)
+        (puthash "olambda" 0.7 cosmo--params)
+        (puthash "orel" 8.52444340102e-05 cosmo--params)
+        nil)
 
   (defun cosmo-test-efunc ()
-    "Test the E(z) function."
-    (assert (cosmo-almost-eq (cosmo-efunc 1000.0) 1.96592660e+04 1e-3)))
+    (assert (cosmo-almost-eq (cosmo-efunc 1000.0) 19912.4772226 1e-3)))
 
   (defun cosmo-test-inv-efunc ()
-    "Test the 1/E(z) function."
-    (assert (cosmo-almost-eq (cosmo-inv-efunc 1000.0) 5.08665990e-05 1e-3)))
+    (assert (cosmo-almost-eq (cosmo-inv-efunc 1000.0) 5.02197686819e-05 1e-3)))
+
+  (defun cosmo-test-hubble ()
+    (assert (cosmo-almost-eq (cosmo-get-hubble 1000.0) 1393873.40558 1e-3)))
+
+  (defun cosmo-test-hubble-distance ()
+    (assert (cosmo-almost-eq (cosmo-get-hubble-distance) 4282.7494 1e-3)))
+
+  (defun cosmo-test-hubble-time ()
+    (assert (cosmo-almost-eq (cosmo-get-hubble-time) 13.9684603096 1e-3)))
 
   (defun cosmo-test-los-comoving-distance ()
-    "Test the line-of-sight comoving distance."
     (assert (cosmo-almost-eq
-             (cosmo-get-los-comoving-distance 1000.0) 13598.01849955 1e-3)))
+             (cosmo-get-los-comoving-distance 1000.0) 13454.7229832 1e-3)))
+
+  (defun cosmo-test-transverse-comoving-distance ()
+    (assert (cosmo-almost-eq
+             (cosmo-get-transverse-comoving-distance 1000.0)
+             13232.6210034 1e-3)))
+
+  (defun cosmo-test-luminosity-distance ()
+    (assert (cosmo-almost-eq
+             (cosmo-get-luminosity-distance 1000.0) 13245853.6244 1e-3)))
+
+  (defun cosmo-test-angular-diameter-distance ()
+    (assert (cosmo-almost-eq
+             (cosmo-get-angular-diameter-distance 1000.0) 13.2194016018 1e-3)))
 
   (cosmo-test-string-number-p)
   (cosmo-test-string-notnumber-p)
   (cosmo-test-set-default)
   (cosmo-test-efunc)
   (cosmo-test-inv-efunc)
-  (cosmo-test-los-comoving-distance))
+  (cosmo-test-hubble)
+  (cosmo-test-hubble-distance)
+  (cosmo-test-hubble-time)
+  (cosmo-test-los-comoving-distance)
+  (cosmo-test-transverse-comoving-distance)
+  (cosmo-test-luminosity-distance)
+  (cosmo-test-angular-diameter-distance))
 
 (provide 'cosmo)
 
