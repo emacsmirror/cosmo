@@ -1,4 +1,4 @@
-"""test_cosmo -- Comparison values to test cosmo.el
+"""cosmo_compare -- Comparison values to test cosmo.el
 
 Copyright (C) 2017 Francesco Montanari
 
