@@ -22,25 +22,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 * Description
 
-  This package provides a cosmological calculator integrated into the
-  Emacs text editor.
+  /Easily compute cosmological quantities from the Emacs text
+  editor./
 
-  Cosmological quantities are computed for a Lambda-CDM model. Such a
-  framework describes a homogeneous and isotropic universe containing
-  a cosmological constant (Lambda) and a Cold Dark Matter (CDM)
-  component, besides ordinary species. The model is characterized by
-  the following parameters:
-  - H_0 :: Hubble parameter (expansion rate) today
-  - Omega_m0 :: Fractional matter density parameter today.
-  - Omega_Lambda ::  Cosmological constant density parameter. At the
-                     moment we consider only flat Lambda-CDM models,
-                     for which =Omega_Lambda = 1 - Omega_m0=.
+  This package provides a cosmological calculator for Lambda-CDM
+  models. Such a framework describes a homogeneous and isotropic
+  universe containing a cosmological constant (Lambda) and a Cold
+  Dark Matter (CDM) component, besides ordinary species. The
+  model is characterized by the following parameters:
 
-  All cosmological quantities are computed at a given redshift value:
+  - H_0 :: Hubble parameter (expansion rate) today.
+  - Omega_m0 :: Matter density parameter today.
+  - Omega_Lambda :: Cosmological constant density parameter.
+  - Omega_r0 :: Relativistic species (e.g., photons plus
+                neutrinos) density parameter today.
+  - Omega_k0 :: Curvature density parameter today. This
+                parameter is derived from the others above
+                according to Friedmann's equation
+                =Omega_m0 + Omega_Lambda + Omega_r0 + Omega_k0 = 1=.
+
+  All cosmological quantities are computed at a given redshift
+  value:
+
   - redshift :: Gravitational redshift of photons frequency due to the
                 expansion of the Universe.
 
-  Definitions follow Hoggs (1999) [[[https://arxiv.org/abs/astro-ph/9905116][arXiv:astro-ph/9905116]]].
+  Definitions follow Hogg (1999) [[[https://arxiv.org/abs/astro-ph/9905116][arXiv:astro-ph/9905116]]]. The
+  =cosmo-pedia= command is based on [[http://fiteoweb.unige.ch/~durrer/Book.html][Durrer (2008)]]. The
+  =cosmo-calculator= command is based on Gnuastro =astcosmiccal=
+  program (v0.2).
 
 * Download
 
@@ -53,8 +63,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 * Installation
 
-  Copy the =cosmo.el= file into your Emacs configuration
-  directory. E.g., on GNU systems:
+  This program is meant to work with the [[https://www.gnu.org/software/emacs/][Emacs]] text editor. Copy
+  the =cosmo.el= file into a sub-folder under your Emacs
+  configuration directory. (In general this directory can be
+  accessed from Emacs, independently from the operating system,
+  by typing the command =C-x C-f ~/.emacs.d/=.) E.g., on GNU
+  systems:
 
   #+BEGIN_SRC shell
   mkdir ~/.emacs.d/cosmo-el
@@ -72,11 +86,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 * Usage
 
-  Open Emacs and type =M-x cosmo-command=, [fn:1] where the =command= name
-  varies depending on the desired computation. For example:
+  Open Emacs and type =M-x cosmo-command=,[fn:1] where the
+  =command= name varies depending on the desired computation:
 
-  - M-x cosmo-calculator :: Compute cosmology and display summary table in
-       a new buffer. The following illustrates a possible output: [fn:2]
+  # List all interactive commands:
+  #   (apropos-command "cosmo-")
+
+  - cosmo-angular-diameter-distance :: Display angular diameter
+       distance in mini-buffer.
+
+  - cosmo-calculator :: Compute cosmology and display summary
+       table in a new buffer. The following illustrates a
+       possible output:
        #+BEGIN_EXAMPLE
        Cosmology calculator.
 
@@ -93,13 +114,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        <...>
        #+END_EXAMPLE
 
-  - M-x cosmo-set-params :: Change the values of cosmological parameters.
+  - cosmo-hubble :: Display Hubble parameter in mini-buffer.
 
-  A complete list of interactive commands can be obtained by typing
-  =M-x cosmo- TAB=. Documentation is available through =C-h f
-  cosmo-command=, where =command= should be adapted to the particular
-  command. Definitions follow Hoggs 1999 ([[https://arxiv.org/abs/astro-ph/9905116][arXiv:astro-ph/9905116]]).
+  - cosmo-hubble-distance :: Display Hubble distance c/H0 [Mpc]
+       in mini-buffer.
 
+  - cosmo-hubble-time :: Display Hubble distance 1/H0 [Gyr] in
+       mini-buffer.
+
+  - cosmo-los-comoving-distance :: Display line-of-sight comoving
+       distance in mini-buffer.
+
+  - cosmo-luminosity-distance :: Display luminosity distance in
+       mini-buffer.
+
+  - cosmo-pedia :: Display a reference to basic cosmological
+                   definitions.
+
+  - cosmo-set-params :: Change the values of cosmological parameters.
+
+  - cosmo-transverse-comoving-distance :: Display transverse
+       comoving distance in mini-buffer.
+
+  The complete list of interactive commands can be obtained by
+  typing =M-x cosmo- TAB=. Documentation is available through
+  =C-h f cosmo-command=, where =command= should be adapted to the
+  particular command.
 
 * Support
 
@@ -107,12 +147,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   see [[http://www.chiark.greenend.org.uk/~sgtatham/bugs.html][this page]] about how to report bugs effectively.
 
 * Contributing
-
-  /The project is still at an early stage/. Recommendations (and
-  contributions) aimed to improve the source code are highly
-  appreciated. New feature suggestions are also welcome, but at this
-  point priority will be given to reach an idiomatic and extensible
-  code.
 
   Contributions can be submitted as patches. See [[http://orgmode.org/worg/org-contribute.html#patches][this page]] for an
   example of good patches contributions.
@@ -125,6 +159,3 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 [fn:1] The notation =M-x= means that the =ALT= and =x= keys should be
   pressed simultaneously.
-
-[fn:2] The output is similar to that of Gnuastro =astcosmiccal=
-  program (v0.2).
