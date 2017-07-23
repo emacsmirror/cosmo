@@ -316,9 +316,9 @@ Argument ANGULAR-DIST angular diameter distance at given redshift."
           "------------------\n"
           (format "- Curvature fractional density: %s\n"
                   (cosmo-get-ocurvature))
-          (format "- Hubble distance [Mpc]: %s\n"
+          (format "- Hubble distance [Mpc]:        %s\n"
                   (cosmo-get-hubble-distance))
-          (format "- Hubble time [Gyr]: %s\n"
+          (format "- Hubble time [Gyr]:            %s\n"
                   (cosmo-get-hubble-time))
           "\n")
   ;; Cosmological functions.
@@ -328,12 +328,12 @@ Argument ANGULAR-DIST angular diameter distance at given redshift."
                   hubble)
           (format "- Line-of-sight comoving distance [Mpc]: %s\n"
                   los-dist)
-          (format "- Transverse comoving distance [Mpc]: %s\n"
+          (format "- Transverse comoving distance [Mpc]:    %s\n"
                   transverse-dist)
-          (format "- Luminosity distance [Mpc]: %s\n"
-                  luminosity-dist)
-          (format "- Angular diameter distance [Mpc]: %s\n"
-                  angular-dist))
+          (format "- Angular diameter distance [Mpc]:       %s\n"
+                  angular-dist)
+          (format "- Luminosity distance [Mpc]:             %s\n"
+                  luminosity-dist))
   nil)
 
 (defun cosmo-calculator ()
@@ -367,30 +367,33 @@ Argument ANGULAR-DIST angular diameter distance at given redshift."
       (pop-to-buffer cosmo-buffer)
       (insert
        "(`q` to quite)\n\n"
-       "  _Units system_: hbar = c = k_Boltzmann = 1.\n\n"
-       "* Distances relations\n\n"
-       "  - Comoving distance (transverse) :: D_M\n"
-       "  - Angular diameter distance :: D_A = D_M / (1+z)\n"
-       "  - Luminosity distance :: D_L = (1+z) D_M = (1+z)^2 D_A\n\n"
-       "* Conversion factors, units\n\n"
-       "  - 1GeV = 1.6022e-3 erg\n"
-       "         = 1.1605e13 K\n"
-       "         = 1.7827e-24 g\n"
-       "         = 5.0684e13 1/cm\n"
-       "         = 1.5192 1/s\n"
-       "  - 1 pc = 3.2612 light years\n"
-       "         = 3.0856e18 cm\n"
-       "  - 1 Mpc = 1e6pc ~ 3e24 cm ~ 1e14 s\n"
-       "  - 1 AU = 1.4960e13 cm\n"
-       "  - 1 Jy = 1e-23 erg/cm^2/s/Hz\n"
-       "         = 2.4730e-48 GeV^3\n\n"
-       "* Important constants\n\n"
-       "  - Hubble constant :: H0 = 100h km/s/Mpc\n"
-       "                          = 2.1332e-42 h GeV\n"
-       "  - Hubble time, distance :: 1/H0 = 3.0856e17/h s\n"
-       "                                  = 9.7776e9/h yr\n"
-       "                                  = 2997.9/h Mpc\n"
-       "                                  = 9.2503e27/h cm\n"))))
+       "_Units system_: hbar = c = k_Boltzmann = 1.\n\n"
+       "Distances relations\n"
+       "-------------------\n"
+       "- Comoving distance (transverse): D_M\n"
+       "- Angular diameter distance:      D_A = D_M / (1+z)\n"
+       "- Luminosity distance:            D_L = (1+z) D_M = (1+z)^2 D_A\n\n"
+       "Conversion factors, units\n"
+       "-------------------------\n"
+       "- 1GeV = 1.6022e-3 erg\n"
+       "       = 1.1605e13 K\n"
+       "       = 1.7827e-24 g\n"
+       "       = 5.0684e13 1/cm\n"
+       "       = 1.5192 1/s\n"
+       "- 1 pc = 3.2612 light years\n"
+       "       = 3.0856e18 cm\n"
+       "- 1 Mpc = 1e6pc ~ 3e24 cm ~ 1e14 s\n"
+       "- 1 AU = 1.4960e13 cm\n"
+       "- 1 Jy = 1e-23 erg/cm^2/s/Hz\n"
+       "       = 2.4730e-48 GeV^3\n\n"
+       "Important constants\n"
+       "-------------------\n"
+       "- Hubble constant:       H0 = 100h km/s/Mpc\n"
+       "                            = 2.1332e-42 h GeV\n"
+       "- Hubble time, distance: 1/H0 = 3.0856e17/h s\n"
+       "                               = 9.7776e9/h yr\n"
+       "                               = 2997.9/h Mpc\n"
+       "                               = 9.2503e27/h cm\n"))))
 
 (provide 'cosmo)
 

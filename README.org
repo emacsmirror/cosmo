@@ -64,8 +64,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 * Installation
 
   This program is meant to work with the [[https://www.gnu.org/software/emacs/][Emacs]] text editor. Copy
-  the =cosmo.el= file into your Emacs configuration
-  directory. E.g., on GNU systems:
+  the =cosmo.el= file into a sub-folder under your Emacs
+  configuration directory. (In general this directory can be
+  accessed from Emacs, independently from the operating system,
+  by typing the command =C-x C-f ~/.emacs.d/=.) E.g., on GNU
+  systems:
 
   #+BEGIN_SRC shell
   mkdir ~/.emacs.d/cosmo-el
