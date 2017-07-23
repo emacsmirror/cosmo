@@ -152,8 +152,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   example of good patches contributions.
 
   More substantial contributions should proceed through git
-  [[https://git-scm.com/book/en/v2/Distributed-Git-Distributed-Workflows][Integration-Manager Workflow]]. See [[https://www.gnu.org/software/gnuastro/manual/html_node/Contributing-to-Gnuastro.html][this page]] for an example of a
-  complete working session.
+  [[https://git-scm.com/book/en/v2/Distributed-Git-Distributed-Workflows][Integration-Manager Workflow]]. In short: fork the repository, do
+  the changes on a new branch (the master branch should only be
+  used to pull updates from the original git remote onto your
+  personal repository) and notify via the issue tracker or email
+  about the modifications.
 
 * Footnotes
 
