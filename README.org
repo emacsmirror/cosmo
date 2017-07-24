@@ -86,8 +86,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 * Usage
 
-  Open Emacs and type =M-x cosmo-command=,[fn:1] where the
-  =command= name varies depending on the desired computation:
+  Open Emacs and type =M-x cosmo-command= (the notation =M-x=
+  means that the =ALT= and =x= keys should be pressed
+  simultaneously), where the =command= name varies depending on
+  the desired computation:
 
   # List all interactive commands:
   #   (apropos-command "cosmo-")
@@ -136,11 +138,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   - cosmo-transverse-comoving-distance :: Display transverse
        comoving distance in mini-buffer.
 
-  The complete list of interactive commands can be obtained by
-  typing =M-x cosmo- TAB=. Documentation is available through
-  =C-h f cosmo-command=, where =command= should be adapted to the
-  particular command.
-
 * Support
 
   Bugs and issues are tracked through the [[https://gitlab.com/montanari/cosmo-el][git repository page]]. Please
@@ -157,8 +154,3 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   used to pull updates from the original git remote onto your
   personal repository) and notify via the issue tracker or email
   about the modifications.
-
-* Footnotes
-
-[fn:1] The notation =M-x= means that the =ALT= and =x= keys should be
-  pressed simultaneously.

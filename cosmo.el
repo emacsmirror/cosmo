@@ -61,6 +61,9 @@
 
 ;; In priority order:
 ;;
+;; - Allow users to load a customized file with the cosmo-pedia
+;;   command (or describe how to do it from ~/.emacs).
+;;
 ;; - Simpson's rule performs well for standard cosmologies and for z <
 ;;   1000. If non-standard cosmologies or very large redshifts are
 ;;   required, more steps may be required. They should be set
@@ -71,17 +74,49 @@
 ;;
 ;; - Refactor tests, now the code is too cumbersome and repetitive.
 ;;
-;; - Extend cosmo-pedia.
-;;
 ;; - Add all quantities from Hogg 1999.
 ;;
 ;; - Suggest default parameters when reading them with the related
 ;;   command; set the to default values if none is entered.
 
-
 ;;; Code:
 
-;;; Define cosmological parameters.
+;;; Global variables.
+
+(defvar cosmo-pedia-text
+  ;; Text appearing in the *Cosmopedia* buffer.
+  "(`q` to quite)
+
+Units system: hbar = c = k_Boltzmann = 1.
+
+Distances relations
+-------------------
+- Comoving distance (transverse): D_M
+- Angular diameter distance:      D_A = D_M / (1+z)
+- Luminosity distance:            D_L = (1+z) D_M = (1+z)^2 D_A
+
+Conversion factors, units
+-------------------------
+- 1GeV = 1.6022e-3 erg
+       = 1.1605e13 K
+       = 1.7827e-24 g
+       = 5.0684e13 1/cm
+       = 1.5192 1/s
+- 1 pc = 3.2612 light years
+       = 3.0856e18 cm
+- 1 Mpc = 1e6pc ~ 3e24 cm ~ 1e14 s
+- 1 AU = 1.4960e13 cm
+- 1 Jy = 1e-23 erg/cm^2/s/Hz
+       = 2.4730e-48 GeV^3
+
+Important constants
+-------------------
+- Hubble constant: H0 = 100h km/s/Mpc
+                      = 2.1332e-42 h GeV
+- Hubble time, distance: 1/H0 = 3.0856e17/h s
+                               = 9.7776e9/h yr
+                               = 2997.9/h Mpc
+                               = 9.2503e27/h cm")
 
 ;; Hash table containing all independent cosmological parameters.
 (defvar cosmo--params
@@ -92,15 +127,6 @@
     (puthash "orel" 0.0 table)           ; Relativistic density today.
     table)
   "Table containing Lambda-CDM cosmological parameters.")
-
-;; Derived cosmological parameter.
-
-(defun cosmo-get-ocurvature ()
-  "Get curvature density parameter today from Friedmann equations."
-  (let ((omatter (gethash "omatter" cosmo--params))
-        (olambda (gethash "olambda" cosmo--params))
-        (orel (gethash "orel" cosmo--params)))
-    (- 1.0 omatter olambda orel)))
 
 ;;; Handle input.
 
@@ -168,6 +194,13 @@ Example:
 
 
 ;;; Compute cosmological functions.
+
+(defun cosmo-get-ocurvature ()
+  "Get curvature density parameter today from Friedmann equations."
+  (let ((omatter (gethash "omatter" cosmo--params))
+        (olambda (gethash "olambda" cosmo--params))
+        (orel (gethash "orel" cosmo--params)))
+    (- 1.0 omatter olambda orel)))
 
 (defun cosmo-efunc (redshift)
   "E(z) function at a given REDSHIFT."
@@ -365,35 +398,7 @@ Argument ANGULAR-DIST angular diameter distance at given redshift."
   (let* ((cosmo-buffer "*Cosmopedia*"))
     (with-output-to-temp-buffer cosmo-buffer
       (pop-to-buffer cosmo-buffer)
-      (insert
-       "(`q` to quite)\n\n"
-       "_Units system_: hbar = c = k_Boltzmann = 1.\n\n"
-       "Distances relations\n"
-       "-------------------\n"
-       "- Comoving distance (transverse): D_M\n"
-       "- Angular diameter distance:      D_A = D_M / (1+z)\n"
-       "- Luminosity distance:            D_L = (1+z) D_M = (1+z)^2 D_A\n\n"
-       "Conversion factors, units\n"
-       "-------------------------\n"
-       "- 1GeV = 1.6022e-3 erg\n"
-       "       = 1.1605e13 K\n"
-       "       = 1.7827e-24 g\n"
-       "       = 5.0684e13 1/cm\n"
-       "       = 1.5192 1/s\n"
-       "- 1 pc = 3.2612 light years\n"
-       "       = 3.0856e18 cm\n"
-       "- 1 Mpc = 1e6pc ~ 3e24 cm ~ 1e14 s\n"
-       "- 1 AU = 1.4960e13 cm\n"
-       "- 1 Jy = 1e-23 erg/cm^2/s/Hz\n"
-       "       = 2.4730e-48 GeV^3\n\n"
-       "Important constants\n"
-       "-------------------\n"
-       "- Hubble constant:       H0 = 100h km/s/Mpc\n"
-       "                            = 2.1332e-42 h GeV\n"
-       "- Hubble time, distance: 1/H0 = 3.0856e17/h s\n"
-       "                               = 9.7776e9/h yr\n"
-       "                               = 2997.9/h Mpc\n"
-       "                               = 9.2503e27/h cm\n"))))
+      (insert cosmo-pedia-text))))
 
 (provide 'cosmo)
 
