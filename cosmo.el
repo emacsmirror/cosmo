@@ -108,6 +108,7 @@ Conversion factors, units
 - 1 AU = 1.4960e13 cm
 - 1 Jy = 1e-23 erg/cm^2/s/Hz
        = 2.4730e-48 GeV^3
+- 1 yr ~ pi * 1e17 s
 
 Important constants
 -------------------
