@@ -6,11 +6,7 @@
 ;; Created: 22 April 2017
 ;; Version: 0.1
 ;; Keywords: tools
-<<<<<<< HEAD
-;; Homepage: https://gitlab.com/montanari/cosmo-el/
-=======
 ;; Homepage: https://gitlab.com/montanari/cosmo-el
->>>>>>> devel
 ;;
 ;; This file is not part of GNU Emacs.
 ;;
@@ -51,13 +47,7 @@
 ;; - redshift :: Gravitational redshift of photons frequency due to the
 ;;               expansion of the Universe.
 ;;
-<<<<<<< HEAD
-;; Interactive commands are provided to set the cosmological
-;; parameters and to compute cosmological functions at given redshift
-;; values. Definitions follow Hoggs (1999)
-=======
 ;; Definitions follow Hogg (1999)
->>>>>>> devel
 ;; <https://arxiv.org/abs/astro-ph/9905116>.
 ;;
 ;; Names with "--" are for functions and variables that are meant to
