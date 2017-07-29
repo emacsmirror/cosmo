@@ -70,8 +70,6 @@
 ;;   automatically (the user should only pass a max number of steps)
 ;;   or an error should be shown if the result does not converge.
 ;;
-;; - Consider using Calc as a library for quadrature, and maybe to plot.
-;;
 ;; - Refactor tests, now the code is too cumbersome and repetitive.
 ;;
 ;; - Add all quantities from Hogg 1999.
@@ -193,6 +191,61 @@ Example:
                                 (* 4 sum1)
                                 (* 2 sum2)))))))
 
+;; (defun cosmo-trapzd (func lo hi sum niter)
+;;   "Extended trapezoidal rule to integrate FUNC from LO to HI.
+;; Compute the refinement to an old SUM result, previous to the
+;; current NITER stage of refinement.  The function must be called
+;; for NITER = 1, 2, 3, ... in order.  Boundaries LO and HI are
+;; always converted to floats."
+;;   (let ((lo (float lo))                 ; Always assume float boundaries.
+;;         (hi (float hi)))
+;;     ;; NITER=1 corresponds simply to integrate(func(x), x, lo, hi)
+;;     (if (= niter 1)
+;;         (* 0.5 (- hi lo) (+ (funcall func lo) (funcall func hi)))
+;;       ;; Subsequent calls NITER = 2, 3, ... (in order) improve the
+;;       ;; accuracy by adding 2^(NITER-2) interior points.
+;;       (let* ((iter (expt 2 (- niter 2)))
+;;              (step (/ (- hi lo) iter))
+;;              (xval (+ lo (* 0.5 step)))
+;;              (sumf 0.0)
+;;              (j 0))
+;;         (while (< j iter)
+;;           (setq sumf (+ sumf (funcall func xval)))
+;;           (setq xval (+ xval step))
+;;           (setq j (1+ j)))
+;;         (* 0.5 (+ sum (* (- hi lo) (/ sumf iter))))))))
+
+
+;; (defun cosmo-qsimp (func lo hi &optional eps jmax)
+;;   "Simpson's integration.
+;; Argument FUNC integrand.
+;; Argument LO lower bound.
+;; Argument HI upper bound.
+;; Optional argument EPS fractional accuracy.
+;; Optional argument JMAX maximum number of steps.
+;; "
+;;   (let ((eps (or eps 1e-6))             ; Set defaults.
+;;         (jmax (or jmax 20))
+;;         (nsum 0.0)                      ; N-th iteration sum.
+;;         (nsumt 0.0)
+;;         (osum 0.0)                      ; Old sum.
+;;         (osumt 0.0)
+;;         (converged nil)
+;;         (j 1))
+;;     (while (and (<= j jmax) (not converged))
+;;       (setq nsumt (cosmo-trapzd func lo hi nsum j))
+;;       (setq nsum (/ (- (* 4.0 nsumt) osumt) 3.0))
+;;       (if (and (> j 5)                  ; Avoid spurious early convergence.
+;;                (or (< (abs (- nsum osum)) (* eps (abs osum)))
+;;                    (and (= nsum 0.0) (= osum 0.0))))
+;;           (setq converged t))
+;;       (setq osum nsum)
+;;       (setq osumt nsumt)
+;;       (setq j (1+ j)))
+;;     (if converged
+;;         nsum
+;;       (error "Error: The integral did not converge. Try to
+;;       increase the number of steps"))))
 
 ;;; Compute cosmological functions.
 
@@ -254,6 +307,7 @@ Example:
   "Line-of-sight comoving distance [Mpc] for Lambda-CDM at a given REDSHIFT."
   (let ((DH (cosmo-get-hubble-distance))
         (int (cosmo-simps #'cosmo-inv-efunc 0.0 redshift 1000)))
+        ;; (int (cosmo-qsimp #'cosmo-inv-efunc 0.0 redshift 1e-3 20)))
     (* DH int)))
 
 (defun cosmo-los-comoving-distance ()
