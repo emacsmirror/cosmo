@@ -39,7 +39,7 @@
 ;; - Omega_k0 :: Curvature density parameter today.  This
 ;;               parameter is derived from the others above
 ;;               according to Friedmann's equation
-;;               =Omega_m0 + Omega_Lambda + Omega_r0 + Omega_k0 = 1=.
+;;               Omega_m0 + Omega_Lambda + Omega_r0 + Omega_k0 = 1.
 ;;
 ;; All cosmological quantities are computed at a given redshift
 ;; value:
