@@ -39,7 +39,7 @@
 ;; - Omega_k0 :: Curvature density parameter today.  This
 ;;               parameter is derived from the others above
 ;;               according to Friedmann's equation
-;;               =Omega_m0 + Omega_Lambda + Omega_r0 + Omega_k0 = 1=.
+;;               Omega_m0 + Omega_Lambda + Omega_r0 + Omega_k0 = 1.
 ;;
 ;; All cosmological quantities are computed at a given redshift
 ;; value:
@@ -61,27 +61,74 @@
 
 ;; In priority order:
 ;;
-;; - Simpson's rule performs well for standard cosmologies and for z <
-;;   1000. If non-standard cosmologies or very large redshifts are
-;;   required, more steps may be required. They should be set
-;;   automatically (the user should only pass a max number of steps)
-;;   or an error should be shown if the result does not converge.
-;;
-;; - Consider using Calc as a library for quadrature, and maybe to plot.
-;;
-;; - Refactor tests, now the code is too cumbersome and repetitive.
-;;
-;; - Extend cosmo-pedia.
+;; - Refactor tests, now they are too cumbersome and repetitive.
 ;;
 ;; - Add all quantities from Hogg 1999.
 ;;
 ;; - Suggest default parameters when reading them with the related
 ;;   command; set the to default values if none is entered.
-
+;;
+;; - Allow users to load a customized file with the cosmo-pedia
+;;   command (or describe how to do it from ~/.emacs).
+;;
+;; - (Consider the following only if performance becomes critical.) At
+;;   a fixed redshift, only cosmo-get-los-comoving-distance perform
+;;   the integral. Other distances are defined in terms of this
+;;   one. However, each time that other distances are required this
+;;   distance is called once again. This is not necessary, it can be
+;;   called just once for a given redshift (or use memoization).
 
 ;;; Code:
 
-;;; Define cosmological parameters.
+;;; Global variables.
+
+(defgroup cosmo nil
+  "Cosmological calculator."
+  :group 'convenience)
+
+(defcustom cosmo-int-prec 1e-3
+  "Fractional accuracy for numerical integrals."
+  :group 'cosmo)
+
+(defcustom cosmo-int-maxsteps 20
+  "Maximum number of steps in the numerical integral algorithm."
+  :group 'cosmo)
+
+(defvar cosmo-pedia-text
+  ;; Text appearing in the *Cosmopedia* buffer.
+  "(`q` to quite)
+
+Units system: hbar = c = k_Boltzmann = 1.
+
+Distances relations
+-------------------
+- Comoving distance (transverse): D_M
+- Angular diameter distance:      D_A = D_M / (1+z)
+- Luminosity distance:            D_L = (1+z) D_M = (1+z)^2 D_A
+
+Conversion factors, units
+-------------------------
+- 1GeV = 1.6022e-3 erg
+       = 1.1605e13 K
+       = 1.7827e-24 g
+       = 5.0684e13 1/cm
+       = 1.5192 1/s
+- 1 pc = 3.2612 light years
+       = 3.0856e18 cm
+- 1 Mpc = 1e6pc ~ 3e24 cm ~ 1e14 s
+- 1 AU = 1.4960e13 cm
+- 1 Jy = 1e-23 erg/cm^2/s/Hz
+       = 2.4730e-48 GeV^3
+- 1 yr ~ pi * 1e17 s
+
+Important constants
+-------------------
+- Hubble constant: H0 = 100h km/s/Mpc
+                      = 2.1332e-42 h GeV
+- Hubble time, distance: 1/H0 = 3.0856e17/h s
+                               = 9.7776e9/h yr
+                               = 2997.9/h Mpc
+                               = 9.2503e27/h cm")
 
 ;; Hash table containing all independent cosmological parameters.
 (defvar cosmo--params
@@ -92,15 +139,6 @@
     (puthash "orel" 0.0 table)           ; Relativistic density today.
     table)
   "Table containing Lambda-CDM cosmological parameters.")
-
-;; Derived cosmological parameter.
-
-(defun cosmo-get-ocurvature ()
-  "Get curvature density parameter today from Friedmann equations."
-  (let ((omatter (gethash "omatter" cosmo--params))
-        (olambda (gethash "olambda" cosmo--params))
-        (orel (gethash "orel" cosmo--params)))
-    (- 1.0 omatter olambda orel)))
 
 ;;; Handle input.
 
@@ -143,31 +181,68 @@
   "Hyperbolic sine of real arguments X."
   (* 0.5 (- (exp x) (exp (- x)))))
 
-(defun cosmo-simps (func a b &optional n)
-  "Simpson rule.
+(defun cosmo--trapzd (func lo hi sum niter)
+  "Extended trapezoidal rule to integrate FUNC from LO to HI.
+Compute the refinement to an old SUM result, previous to the
+current NITER stage of refinement.  The function must be called
+for NITER = 1, 2, 3, ... in order.  Boundaries LO and HI are
+always converted to floats."
+  (let ((lo (float lo))                 ; Always assume float boundaries.
+        (hi (float hi)))
+    ;; NITER=1 corresponds simply to integrate(func(x), x, lo, hi)
+    (if (= niter 1)
+        (* 0.5 (- hi lo) (+ (funcall func lo) (funcall func hi)))
+      ;; Subsequent calls NITER = 2, 3, ... (in order) improve the
+      ;; accuracy by adding 2^(NITER-2) interior points.
+      (let* ((iter (expt 2 (- niter 2)))
+             (step (/ (- hi lo) iter))
+             (xval (+ lo (* 0.5 step)))
+             (sumf 0.0)
+             (j 0))
+        (while (< j iter)
+          (setq sumf (+ sumf (funcall func xval)))
+          (setq xval (+ xval step))
+          (setq j (1+ j)))
+        (* 0.5 (+ sum (* (- hi lo) (/ sumf iter))))))))
 
-Integrate a function FUNC of one argument from A to B in N steps.
-The values A and B will be considered as float.
-
-Example:
-\(cosmo-simps #'\(lambda \(x\) x\) 0.0 1.0\)"
-  (let ((a (float a))                   ; Extremes must be floats.
-        (b (float b))
-        (n (or n 50)))
-    (loop with h = (/ (- b a) n)
-          with sum1 = (funcall func (+ a (/ h 2)))
-          with sum2 = 0
-          for i from 1 below n
-          do (incf sum1 (funcall func (+ a (* h i) (/ h 2))))
-          do (incf sum2 (funcall func (+ a (* h i))))
-          finally (return (* (/ h 6)
-                             (+ (funcall func a)
-                                (funcall func b)
-                                (* 4 sum1)
-                                (* 2 sum2)))))))
-
+(defun cosmo-qsimp (func lo hi &optional eps jmax)
+  "Simpson's integration.
+Argument FUNC integrand.
+Argument LO lower bound.
+Argument HI upper bound.
+Optional argument EPS fractional accuracy.
+Optional argument JMAX maximum number of steps."
+  (let ((eps (or eps 1e-6))             ; Set defaults.
+        (jmax (or jmax 20))
+        (nsum 0.0)                      ; N-th iteration sum.
+        (nsumt 0.0)
+        (osum 0.0)                      ; Old sum.
+        (osumt 0.0)
+        (converged nil)
+        (j 1))
+    (while (and (<= j jmax) (not converged))
+      (setq nsumt (cosmo--trapzd func lo hi nsum j))
+      (setq nsum (/ (- (* 4.0 nsumt) osumt) 3.0))
+      (if (and (> j 5)                  ; Avoid spurious early convergence.
+               (or (< (abs (- nsum osum)) (* eps (abs osum)))
+                   (and (= nsum 0.0) (= osum 0.0))))
+          (setq converged t))
+      (setq osum nsum)
+      (setq osumt nsumt)
+      (setq j (1+ j)))
+    (if converged
+        nsum
+      (error "Error: the integral did not converge, try to
+      increase the number of steps"))))
 
 ;;; Compute cosmological functions.
+
+(defun cosmo-get-ocurvature ()
+  "Get curvature density parameter today from Friedmann equations."
+  (let ((omatter (gethash "omatter" cosmo--params))
+        (olambda (gethash "olambda" cosmo--params))
+        (orel (gethash "orel" cosmo--params)))
+    (- 1.0 omatter olambda orel)))
 
 (defun cosmo-efunc (redshift)
   "E(z) function at a given REDSHIFT."
@@ -219,7 +294,8 @@ Example:
 (defun cosmo-get-los-comoving-distance (redshift)
   "Line-of-sight comoving distance [Mpc] for Lambda-CDM at a given REDSHIFT."
   (let ((DH (cosmo-get-hubble-distance))
-        (int (cosmo-simps #'cosmo-inv-efunc 0.0 redshift 1000)))
+        (int (cosmo-qsimp #'cosmo-inv-efunc 0.0 redshift
+                          cosmo-int-prec cosmo-int-maxsteps)))
     (* DH int)))
 
 (defun cosmo-los-comoving-distance ()
@@ -356,44 +432,13 @@ Argument ANGULAR-DIST angular diameter distance at given redshift."
                          los-dist transverse-dist luminosity-dist
                          angular-dist))))
 
-
-;;; Cosmopedia
-
 (defun cosmo-pedia ()
   "Display a reference to basic cosmological definitions."
   (interactive)
   (let* ((cosmo-buffer "*Cosmopedia*"))
     (with-output-to-temp-buffer cosmo-buffer
       (pop-to-buffer cosmo-buffer)
-      (insert
-       "(`q` to quite)\n\n"
-       "_Units system_: hbar = c = k_Boltzmann = 1.\n\n"
-       "Distances relations\n"
-       "-------------------\n"
-       "- Comoving distance (transverse): D_M\n"
-       "- Angular diameter distance:      D_A = D_M / (1+z)\n"
-       "- Luminosity distance:            D_L = (1+z) D_M = (1+z)^2 D_A\n\n"
-       "Conversion factors, units\n"
-       "-------------------------\n"
-       "- 1GeV = 1.6022e-3 erg\n"
-       "       = 1.1605e13 K\n"
-       "       = 1.7827e-24 g\n"
-       "       = 5.0684e13 1/cm\n"
-       "       = 1.5192 1/s\n"
-       "- 1 pc = 3.2612 light years\n"
-       "       = 3.0856e18 cm\n"
-       "- 1 Mpc = 1e6pc ~ 3e24 cm ~ 1e14 s\n"
-       "- 1 AU = 1.4960e13 cm\n"
-       "- 1 Jy = 1e-23 erg/cm^2/s/Hz\n"
-       "       = 2.4730e-48 GeV^3\n\n"
-       "Important constants\n"
-       "-------------------\n"
-       "- Hubble constant:       H0 = 100h km/s/Mpc\n"
-       "                            = 2.1332e-42 h GeV\n"
-       "- Hubble time, distance: 1/H0 = 3.0856e17/h s\n"
-       "                               = 9.7776e9/h yr\n"
-       "                               = 2997.9/h Mpc\n"
-       "                               = 9.2503e27/h cm\n"))))
+      (insert cosmo-pedia-text))))
 
 (provide 'cosmo)
 

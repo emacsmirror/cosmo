@@ -86,8 +86,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 * Usage
 
-  Open Emacs and type =M-x cosmo-command=,[fn:1] where the
-  =command= name varies depending on the desired computation:
+  Open Emacs and type =M-x cosmo-command= (the notation =M-x=
+  means that the =ALT= and =x= keys should be pressed
+  simultaneously), where the =command= name varies depending on
+  the desired computation:
 
   # List all interactive commands:
   #   (apropos-command "cosmo-")
@@ -136,10 +138,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   - cosmo-transverse-comoving-distance :: Display transverse
        comoving distance in mini-buffer.
 
-  The complete list of interactive commands can be obtained by
-  typing =M-x cosmo- TAB=. Documentation is available through
-  =C-h f cosmo-command=, where =command= should be adapted to the
-  particular command.
+  Use the command =M-x customize= to set variables related to
+  internal implementation details (e.g., the precision of
+  numerical integrals), under the =Cosmo= group.
 
 * Support
 
@@ -152,10 +153,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   example of good patches contributions.
 
   More substantial contributions should proceed through git
-  [[https://git-scm.com/book/en/v2/Distributed-Git-Distributed-Workflows][Integration-Manager Workflow]]. See [[https://www.gnu.org/software/gnuastro/manual/html_node/Contributing-to-Gnuastro.html][this page]] for an example of a
-  complete working session.
-
-* Footnotes
-
-[fn:1] The notation =M-x= means that the =ALT= and =x= keys should be
-  pressed simultaneously.
+  [[https://git-scm.com/book/en/v2/Distributed-Git-Distributed-Workflows][Integration-Manager Workflow]]. In short: fork the repository, do
+  the changes on a new branch (the master branch should only be
+  used to pull updates from the original git remote onto your
+  personal repository) and notify via the issue tracker or email
+  about the modifications.
