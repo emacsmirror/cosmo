@@ -138,6 +138,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   - cosmo-transverse-comoving-distance :: Display transverse
        comoving distance in mini-buffer.
 
+  Use the command =M-x customize= to set variables related to
+  internal implementation details (e.g., the precision of
+  numerical integrals), under the =Cosmo= group.
+
 * Support
 
   Bugs and issues are tracked through the [[https://gitlab.com/montanari/cosmo-el][git repository page]]. Please
