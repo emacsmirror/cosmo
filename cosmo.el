@@ -3,6 +3,7 @@
 ;; Copyright (C) 2017 Francesco Montanari
 ;;
 ;; Author: Francesco Montanari <fmnt@fmnt.info>
+;; Maintainer: Francesco Montanari <fmnt@fmnt.info>
 ;; Created: 22 April 2017
 ;; Version: 0.1
 ;; Keywords: tools
@@ -25,13 +26,13 @@
 
 ;;; Commentary:
 
-;; This package provides a cosmological calculator Lambda-CDM
+;; This package provides a cosmological calculator for Lambda-CDM
 ;; models.  Such a framework describes a homogeneous and isotropic
 ;; universe containing a cosmological constant (Lambda) and a Cold
 ;; Dark Matter (CDM) component, besides ordinary species.  The
 ;; model is characterized by the following parameters:
 ;;
-;; - H_0 :: Hubble parameter (expansion rate) today
+;; - H_0 :: Hubble parameter (expansion rate) today.
 ;; - Omega_m0 :: Matter density parameter today.
 ;; - Omega_Lambda :: Cosmological constant density parameter.
 ;; - Omega_r0 :: Relativistic species (e.g., photons plus
@@ -175,7 +176,7 @@ Important constants
              (cosmo--check-param key (gethash key cosmo--params)))
            cosmo--params))
 
-;;; Numerical utilities. (May be replaced by calling calc-eval.)
+;;; Numerical utilities.
 
 (defun cosmo-sinh (x)
   "Hyperbolic sine of real arguments X."
@@ -400,15 +401,15 @@ Argument ANGULAR-DIST angular diameter distance at given redshift."
   ;; Cosmological functions.
   (insert "Cosmography at required redshift\n"
           "--------------------------------\n"
-          (format "- Hubble parameter [km/s/Mpc]:           %s\n"
+          (format "- Hubble parameter [km/s/Mpc]:             %s\n"
                   hubble)
-          (format "- Line-of-sight comoving distance [Mpc]: %s\n"
+          (format "- Comoving distance (line-of-sight) [Mpc]: %s\n"
                   los-dist)
-          (format "- Transverse comoving distance [Mpc]:    %s\n"
+          (format "- Comoving distance (transverse) [Mpc]:    %s\n"
                   transverse-dist)
-          (format "- Angular diameter distance [Mpc]:       %s\n"
+          (format "- Angular diameter distance [Mpc]:         %s\n"
                   angular-dist)
-          (format "- Luminosity distance [Mpc]:             %s\n"
+          (format "- Luminosity distance [Mpc]:               %s\n"
                   luminosity-dist))
   nil)
 
