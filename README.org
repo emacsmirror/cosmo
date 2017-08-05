@@ -54,9 +54,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 * Download
 
-  The source code can be downloaded from the [[https://gitlab.com/montanari/cosmo-el][git repository page]].
+  Downloaded the source code from the [[https://gitlab.com/montanari/cosmo-el][git repository page]].
 
-  Alternatively, the git repository can be cloned:
+  Alternatively, clone the git repository:
   #+BEGIN_SRC shell
   git clone git@gitlab.com:montanari/cosmo-el.git
   #+END_SRC
@@ -87,7 +87,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 * Usage
 
   Open Emacs and type =M-x cosmo-command= (the notation =M-x=
-  means that the =ALT= and =x= keys should be pressed
+  means that the =ALT= and =x= keys must be pressed
   simultaneously), where the =command= name varies depending on
   the desired computation:
 
@@ -142,6 +142,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   internal implementation details (e.g., the precision of
   numerical integrals), under the =Cosmo= group.
 
+  To interrupt an ongoing computation press =C-g=.
+
 * Support
 
   Bugs and issues are tracked through the [[https://gitlab.com/montanari/cosmo-el][git repository page]]. Please
@@ -149,8 +151,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 * Contributing
 
-  Contributions can be submitted as patches. See [[http://orgmode.org/worg/org-contribute.html#patches][this page]] for an
-  example of good patches contributions.
+  Please see [[http://orgmode.org/worg/org-contribute.html#patches][this page]] for a good example of patches
+  contributions.
 
   More substantial contributions should proceed through git
   [[https://git-scm.com/book/en/v2/Distributed-Git-Distributed-Workflows][Integration-Manager Workflow]]. In short: fork the repository, do
