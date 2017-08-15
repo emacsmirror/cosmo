@@ -182,6 +182,10 @@ Important constants
   "Hyperbolic sine of real arguments X."
   (* 0.5 (- (exp x) (exp (- x)))))
 
+(defun cosmo-asinh (x)
+  "Inverse hyperbolic sine of real arguments X."
+  (log (+ x (sqrt (1+ (* x x))))))
+
 (defun cosmo--trapzd (func lo hi sum niter)
   "Extended trapezoidal rule to integrate FUNC from LO to HI.
 Compute the refinement to an old SUM result, previous to the
@@ -349,6 +353,46 @@ Optional argument JMAX maximum number of steps."
   (let ((z (cosmo--read-param "redshift")))
     (message (format "%s Mpc"
                      (cosmo-get-luminosity-distance z)))))
+
+(defun cosmo-get-parallax-distance (redshift)
+  "Parallax distance [Mpc] for Lambda-CDM at a given REDSHIFT."
+  (let* ((DH (cosmo-get-hubble-distance))
+         (DM (cosmo-get-transverse-comoving-distance redshift))
+         (dM (/ DM DH))
+         (ocurvature (cosmo-get-ocurvature)))
+    (/ DM (+ dM (sqrt (1+ (* ocurvature dM dM)))))))
+
+(defun cosmo-parallax-distance ()
+  "Display parallax distance in mini-buffer."
+  (interactive)
+  (let ((z (cosmo--read-param "redshift")))
+    (message (format "%s Mpc"
+                     (cosmo-get-parallax-distance z)))))
+
+(defun cosmo--get-comoving-volume-nonflat (DM DH ocurvature)
+  "Return the comoving volume for non-vanishing curvature."
+  (let* ((DM-over-DH (/ DM DH))
+         (sqrt-ok (sqrt (abs (cosmo-get-ocurvature))))
+         (pref (* 2.0 float-pi (/ (expt DH 3.0) ocurvature)))
+         (func (cond ((> ocurvature 0.0)
+                      #'cosmo-asinh)
+                     ((< ocurvature 0.0)
+                      #'asin)
+                     (t (error "Error: wrong curvature parameter value")))))
+    (setq term1 (* DM-over-DH
+                   (sqrt (1+ (* ocurvature (expt DM-over-DH 2.0))))))
+    (setq term2 (/ (funcall func (* sqrt-ok DM-over-DH)) sqrt-ok))
+    (* pref (- term1 term2))
+    ))
+
+(defun cosmo-get-comoving-volume (redshift)
+  "Comoving volume [Mpc^3] for Lambda-CDM at a given REDSHIFT."
+  (let* ((DH (cosmo-get-hubble-distance))
+         (DM (cosmo-get-transverse-comoving-distance redshift))
+         (ocurvature (cosmo-get-ocurvature)))
+    (if (= ocurvature 0.0)
+        (* (/ 4.0 3.0) float-pi (expt DM 3.0))
+        (cosmo--get-comoving-volume-nonflat DM DH ocurvature))))
 
 ;;; Handle output.
 
