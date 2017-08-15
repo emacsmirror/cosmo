@@ -370,7 +370,10 @@ Optional argument JMAX maximum number of steps."
                      (cosmo-get-parallax-distance z)))))
 
 (defun cosmo--get-comoving-volume-nonflat (DM DH ocurvature)
-  "Return the comoving volume for non-vanishing curvature."
+  "Return the comoving volume for non-vanishing curvature.
+Argument DM comoving distance (transverse).
+Argument DH Hubble distance
+Argument OCURVATURE curvature density parameter"
   (let* ((DM-over-DH (/ DM DH))
          (sqrt-ok (sqrt (abs (cosmo-get-ocurvature))))
          (pref (* 2.0 float-pi (/ (expt DH 3.0) ocurvature)))
@@ -393,6 +396,13 @@ Optional argument JMAX maximum number of steps."
     (if (= ocurvature 0.0)
         (* (/ 4.0 3.0) float-pi (expt DM 3.0))
         (cosmo--get-comoving-volume-nonflat DM DH ocurvature))))
+
+(defun cosmo-comoving-volume ()
+  "Display comoving volume in mini-buffer."
+  (interactive)
+  (let ((z (cosmo--read-param "redshift")))
+    (message (format "%s Mpc^3"
+                     (cosmo-get-comoving-volume z)))))
 
 ;;; Handle output.
 
