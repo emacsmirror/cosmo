@@ -3,9 +3,9 @@
 ;; Copyright (C) 2017 Francesco Montanari
 ;;
 ;; Author: Francesco Montanari <fmnt@fmnt.info>
-;; Maintainer: Francesco Montanari <fmnt@fmnt.info>
 ;; Created: 22 April 2017
 ;; Version: 0.1
+;; Package-Requires: ((emacs "24.4"))
 ;; Keywords: tools
 ;; Homepage: https://gitlab.com/montanari/cosmo-el
 ;;
@@ -60,17 +60,8 @@
 
 ;;; Todo:
 
-;; In priority order:
-;;
-;; - Refactor tests, now they are too cumbersome and repetitive.
-;;
-;; - Add all quantities from Hogg 1999.
-;;
 ;; - Suggest default parameters when reading them with the related
 ;;   command; set the to default values if none is entered.
-;;
-;; - Allow users to load a customized file with the cosmo-pedia
-;;   command (or describe how to do it from ~/.emacs).
 ;;
 ;; - (Consider the following only if performance becomes critical.) At
 ;;   a fixed redshift, only cosmo-get-los-comoving-distance perform
@@ -94,42 +85,6 @@
 (defcustom cosmo-int-maxsteps 20
   "Maximum number of steps in the numerical integral algorithm."
   :group 'cosmo)
-
-(defvar cosmo-pedia-text
-  ;; Text appearing in the *Cosmopedia* buffer.
-  "(`q` to quite)
-
-Units system: hbar = c = k_Boltzmann = 1.
-
-Distances relations
--------------------
-- Comoving distance (transverse): D_M
-- Angular diameter distance:      D_A = D_M / (1+z)
-- Luminosity distance:            D_L = (1+z) D_M = (1+z)^2 D_A
-
-Conversion factors, units
--------------------------
-- 1GeV = 1.6022e-3 erg
-       = 1.1605e13 K
-       = 1.7827e-24 g
-       = 5.0684e13 1/cm
-       = 1.5192 1/s
-- 1 pc = 3.2612 light years
-       = 3.0856e18 cm
-- 1 Mpc = 1e6pc ~ 3e24 cm ~ 1e14 s
-- 1 AU = 1.4960e13 cm
-- 1 Jy = 1e-23 erg/cm^2/s/Hz
-       = 2.4730e-48 GeV^3
-- 1 yr ~ pi * 1e17 s
-
-Important constants
--------------------
-- Hubble constant: H0 = 100h km/s/Mpc
-                      = 2.1332e-42 h GeV
-- Hubble time, distance: 1/H0 = 3.0856e17/h s
-                               = 9.7776e9/h yr
-                               = 2997.9/h Mpc
-                               = 9.2503e27/h cm")
 
 ;; Hash table containing all independent cosmological parameters.
 (defvar cosmo--params
@@ -181,6 +136,10 @@ Important constants
 (defun cosmo-sinh (x)
   "Hyperbolic sine of real arguments X."
   (* 0.5 (- (exp x) (exp (- x)))))
+
+(defun cosmo-asinh (x)
+  "Inverse hyperbolic sine of real arguments X."
+  (log (+ x (sqrt (1+ (* x x))))))
 
 (defun cosmo--trapzd (func lo hi sum niter)
   "Extended trapezoidal rule to integrate FUNC from LO to HI.
@@ -350,6 +309,55 @@ Optional argument JMAX maximum number of steps."
     (message (format "%s Mpc"
                      (cosmo-get-luminosity-distance z)))))
 
+(defun cosmo-get-parallax-distance (redshift)
+  "Parallax distance [Mpc] for Lambda-CDM at a given REDSHIFT."
+  (let* ((DH (cosmo-get-hubble-distance))
+         (DM (cosmo-get-transverse-comoving-distance redshift))
+         (dM (/ DM DH))
+         (ocurvature (cosmo-get-ocurvature)))
+    (/ DM (+ dM (sqrt (1+ (* ocurvature dM dM)))))))
+
+(defun cosmo-parallax-distance ()
+  "Display parallax distance in mini-buffer."
+  (interactive)
+  (let ((z (cosmo--read-param "redshift")))
+    (message (format "%s Mpc"
+                     (cosmo-get-parallax-distance z)))))
+
+(defun cosmo--get-comoving-volume-nonflat (DM DH ocurvature)
+  "Return the comoving volume for non-vanishing curvature.
+Argument DM comoving distance (transverse).
+Argument DH Hubble distance.
+Argument OCURVATURE curvature density parameter."
+  (let* ((DM-over-DH (/ DM DH))
+         (sqrt-ok (sqrt (abs (cosmo-get-ocurvature))))
+         (pref (* 2.0 float-pi (/ (expt DH 3.0) ocurvature)))
+         (func (cond ((> ocurvature 0.0)
+                      #'cosmo-asinh)
+                     ((< ocurvature 0.0)
+                      #'asin)
+                     (t (error "Error: wrong curvature parameter value")))))
+    (setq term1 (* DM-over-DH
+                   (sqrt (1+ (* ocurvature (expt DM-over-DH 2.0))))))
+    (setq term2 (/ (funcall func (* sqrt-ok DM-over-DH)) sqrt-ok))
+    (* pref (- term1 term2))))
+
+(defun cosmo-get-comoving-volume (redshift)
+  "Comoving volume [Mpc^3] for Lambda-CDM at a given REDSHIFT."
+  (let* ((DH (cosmo-get-hubble-distance))
+         (DM (cosmo-get-transverse-comoving-distance redshift))
+         (ocurvature (cosmo-get-ocurvature)))
+    (if (= ocurvature 0.0)
+        (* (/ 4.0 3.0) float-pi (expt DM 3.0))
+        (cosmo--get-comoving-volume-nonflat DM DH ocurvature))))
+
+(defun cosmo-comoving-volume ()
+  "Display comoving volume in mini-buffer."
+  (interactive)
+  (let ((z (cosmo--read-param "redshift")))
+    (message (format "%s Mpc^3"
+                     (cosmo-get-comoving-volume z)))))
+
 ;;; Handle output.
 
 (defun cosmo--write-calc-header ()
@@ -432,14 +440,6 @@ Argument ANGULAR-DIST angular diameter distance at given redshift."
       (cosmo--write-calc redshift H0 omatter olambda orel hubble
                          los-dist transverse-dist luminosity-dist
                          angular-dist))))
-
-(defun cosmo-pedia ()
-  "Display a reference to basic cosmological definitions."
-  (interactive)
-  (let* ((cosmo-buffer "*Cosmopedia*"))
-    (with-output-to-temp-buffer cosmo-buffer
-      (pop-to-buffer cosmo-buffer)
-      (insert cosmo-pedia-text))))
 
 (provide 'cosmo)
 

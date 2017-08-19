@@ -50,6 +50,8 @@ def print_curves(reds, cosmo):
                name='luminosity-distance [Mpc]')
     sexp_print(reds, cosmo.angular_diameter_distance(reds).value,
                name='angular-diameter-distance [Mpc]')
+    sexp_print(reds, cosmo.comoving_volume(reds).value,
+               name='comoving-volume [Mpc^3]')
 
 
 def print_open_cosmo():
@@ -59,7 +61,9 @@ def print_open_cosmo():
     Ode0 = 0.7
     cosmo = LambdaCDM(H0=H0, Om0=Om0, Ode0=Ode0)
 
-    print('* Open cosmology:')
+    print('===============')
+    print('Open cosmology:')
+    print('===============')
     print('H0={} [km/s/Mpc], Om0={}, Ode0={}, Orel0={}, Ok0={}\n'
           .format(H0, Om0, Ode0, cosmo.Ogamma(0.)+cosmo.Onu(0.),
                   cosmo.Ok(0.)))
@@ -75,7 +79,9 @@ def print_close_cosmo():
     Ode0 = 0.7
     cosmo = LambdaCDM(H0=H0, Om0=Om0, Ode0=Ode0)
 
-    print('* Close cosmology:')
+    print('================')
+    print('Close cosmology:')
+    print('================')
     print('H0={} [km/s/Mpc], Om0={}, Ode0={}, Orel0={}, Ok0={}\n'
           .format(H0, Om0, Ode0, cosmo.Ogamma(0.)+cosmo.Onu(0.),
                   cosmo.Ok(0.)))
@@ -90,7 +96,9 @@ def print_flat_cosmo():
     Om0 = 0.3
     cosmo = FlatLambdaCDM(H0=H0, Om0=Om0, Tcmb0=0.)
 
-    print('* Flat cosmology:')
+    print('===============')
+    print('Flat cosmology:')
+    print('===============')
     print('H0={} [km/s/Mpc], Om0={}, Ode0={}, Orel0={}, Ok0={}\n'
           .format(H0, Om0, cosmo.Ode(0.), cosmo.Ogamma(0.)+cosmo.Onu(0.),
                   cosmo.Ok(0.)))

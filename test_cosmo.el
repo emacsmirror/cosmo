@@ -28,6 +28,10 @@
 ;; This package provides an unit test for cosmo.el, a cosmological
 ;; calculator.
 
+;;; Todo:
+
+;; - Refactor tests, now they are too cumbersome and repetitive.
+
 ;;; Code:
 
 
@@ -119,6 +123,10 @@ Argument OREL relativistic density parameter today."
   (assert (cosmo-almost-eq
            (cosmo-get-angular-diameter-distance 1000.0) 13.2194016018 1e-3)))
 
+(defun cosmo-test-comoving-volume ()
+  (assert (cosmo-almost-eq
+           (cosmo-get-comoving-volume 1000.0) 1.00014515316e+13 3e-3)))
+
 (cosmo-test-efunc)
 (cosmo-test-inv-efunc)
 (cosmo-test-hubble)
@@ -128,6 +136,7 @@ Argument OREL relativistic density parameter today."
 (cosmo-test-transverse-comoving-distance-open)
 (cosmo-test-luminosity-distance)
 (cosmo-test-angular-diameter-distance)
+(cosmo-test-comoving-volume)
 
 ;;; Close cosmology.
 
@@ -144,7 +153,12 @@ Argument OREL relativistic density parameter today."
            (cosmo-get-transverse-comoving-distance 1000.0)
            14832.933576 1e-3)))
 
+(defun cosmo-test-comoving-volume ()
+  (assert (cosmo-almost-eq
+           (cosmo-get-comoving-volume 1000.0) 1.24288502093e+13 3e-3)))
+
 (cosmo-test-transverse-comoving-distance-close)
+(cosmo-test-comoving-volume)
 
 ;;; Flat cosmology.
 
@@ -158,10 +172,15 @@ Argument OREL relativistic density parameter today."
 
 (defun cosmo-test-transverse-comoving-distance-flat ()
   (assert (cosmo-almost-eq
-           (cosmo-get-transverse-comoving-distance 1000.0)
-           13660.5292969 1e-3)))
+           (cosmo-get-transverse-comoving-distance 1000.0) 13660.5292969 1e-3)))
+
+(defun cosmo-test-comoving-volume ()
+  (assert (cosmo-almost-eq
+           (cosmo-get-comoving-volume 1000.0) 1.06780313213e+13 3e-3)))
 
 (cosmo-test-transverse-comoving-distance-flat)
+(cosmo-test-comoving-volume)
+
 
 ;;; Benchmarks
 
