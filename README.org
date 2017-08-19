@@ -48,7 +48,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 expansion of the Universe.
 
   Definitions follow Hogg (1999) [[[https://arxiv.org/abs/astro-ph/9905116][arXiv:astro-ph/9905116]]]. The
-  =cosmo-pedia= command is based on [[http://fiteoweb.unige.ch/~durrer/Book.html][Durrer (2008)]]. The
   =cosmo-calculator= command is based on Gnuastro =astcosmiccal=
   program (v0.2).
 
@@ -134,9 +133,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        mini-buffer.
 
   - cosmo-parallax-distance :: Display parallax distance in mini-buffer.
-
-  - cosmo-pedia :: Display a reference to basic cosmological
-                   definitions.
 
   - cosmo-set-params :: Change the values of cosmological parameters.
 

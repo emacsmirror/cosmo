@@ -3,9 +3,9 @@
 ;; Copyright (C) 2017 Francesco Montanari
 ;;
 ;; Author: Francesco Montanari <fmnt@fmnt.info>
-;; Maintainer: Francesco Montanari <fmnt@fmnt.info>
 ;; Created: 22 April 2017
 ;; Version: 0.1
+;; Package-Requires: ((emacs "24.4"))
 ;; Keywords: tools
 ;; Homepage: https://gitlab.com/montanari/cosmo-el
 ;;
@@ -85,42 +85,6 @@
 (defcustom cosmo-int-maxsteps 20
   "Maximum number of steps in the numerical integral algorithm."
   :group 'cosmo)
-
-(defvar cosmo-pedia-text
-  ;; Text appearing in the *Cosmopedia* buffer.
-  "(`q` to quite)
-
-Units system: hbar = c = k_Boltzmann = 1.
-
-Distances relations
--------------------
-- Comoving distance (transverse): D_M
-- Angular diameter distance:      D_A = D_M / (1+z)
-- Luminosity distance:            D_L = (1+z) D_M = (1+z)^2 D_A
-
-Conversion factors, units
--------------------------
-- 1GeV = 1.6022e-3 erg
-       = 1.1605e13 K
-       = 1.7827e-24 g
-       = 5.0684e13 1/cm
-       = 1.5192 1/s
-- 1 pc = 3.2612 light years
-       = 3.0856e18 cm
-- 1 Mpc = 1e6pc ~ 3e24 cm ~ 1e14 s
-- 1 AU = 1.4960e13 cm
-- 1 Jy = 1e-23 erg/cm^2/s/Hz
-       = 2.4730e-48 GeV^3
-- 1 yr ~ pi * 1e17 s
-
-Important constants
--------------------
-- Hubble constant: H0 = 100h km/s/Mpc
-                      = 2.1332e-42 h GeV
-- Hubble time, distance: 1/H0 = 3.0856e17/h s
-                               = 9.7776e9/h yr
-                               = 2997.9/h Mpc
-                               = 9.2503e27/h cm")
 
 ;; Hash table containing all independent cosmological parameters.
 (defvar cosmo--params
@@ -476,14 +440,6 @@ Argument ANGULAR-DIST angular diameter distance at given redshift."
       (cosmo--write-calc redshift H0 omatter olambda orel hubble
                          los-dist transverse-dist luminosity-dist
                          angular-dist))))
-
-(defun cosmo-pedia ()
-  "Display a reference to basic cosmological definitions."
-  (interactive)
-  (let* ((cosmo-buffer "*Cosmopedia*"))
-    (with-output-to-temp-buffer cosmo-buffer
-      (pop-to-buffer cosmo-buffer)
-      (insert cosmo-pedia-text))))
 
 (provide 'cosmo)
 
