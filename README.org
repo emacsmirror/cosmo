@@ -116,6 +116,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        <...>
        #+END_EXAMPLE
 
+  - cosmo-comoving-volume :: Display comoving volume in
+       mini-buffer.
+
   - cosmo-hubble :: Display Hubble parameter in mini-buffer.
 
   - cosmo-hubble-distance :: Display Hubble distance c/H0 [Mpc]
@@ -129,6 +132,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   - cosmo-luminosity-distance :: Display luminosity distance in
        mini-buffer.
+
+  - cosmo-parallax-distance :: Display parallax distance in mini-buffer.
 
   - cosmo-pedia :: Display a reference to basic cosmological
                    definitions.

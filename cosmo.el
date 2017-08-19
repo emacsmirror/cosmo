@@ -60,17 +60,8 @@
 
 ;;; Todo:
 
-;; In priority order:
-;;
-;; - Refactor tests, now they are too cumbersome and repetitive.
-;;
-;; - Add all quantities from Hogg 1999.
-;;
 ;; - Suggest default parameters when reading them with the related
 ;;   command; set the to default values if none is entered.
-;;
-;; - Allow users to load a customized file with the cosmo-pedia
-;;   command (or describe how to do it from ~/.emacs).
 ;;
 ;; - (Consider the following only if performance becomes critical.) At
 ;;   a fixed redshift, only cosmo-get-los-comoving-distance perform
@@ -372,8 +363,8 @@ Optional argument JMAX maximum number of steps."
 (defun cosmo--get-comoving-volume-nonflat (DM DH ocurvature)
   "Return the comoving volume for non-vanishing curvature.
 Argument DM comoving distance (transverse).
-Argument DH Hubble distance
-Argument OCURVATURE curvature density parameter"
+Argument DH Hubble distance.
+Argument OCURVATURE curvature density parameter."
   (let* ((DM-over-DH (/ DM DH))
          (sqrt-ok (sqrt (abs (cosmo-get-ocurvature))))
          (pref (* 2.0 float-pi (/ (expt DH 3.0) ocurvature)))
@@ -385,8 +376,7 @@ Argument OCURVATURE curvature density parameter"
     (setq term1 (* DM-over-DH
                    (sqrt (1+ (* ocurvature (expt DM-over-DH 2.0))))))
     (setq term2 (/ (funcall func (* sqrt-ok DM-over-DH)) sqrt-ok))
-    (* pref (- term1 term2))
-    ))
+    (* pref (- term1 term2))))
 
 (defun cosmo-get-comoving-volume (redshift)
   "Comoving volume [Mpc^3] for Lambda-CDM at a given REDSHIFT."
