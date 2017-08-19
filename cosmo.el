@@ -336,10 +336,10 @@ Argument OCURVATURE curvature density parameter."
                       #'cosmo-asinh)
                      ((< ocurvature 0.0)
                       #'asin)
-                     (t (error "Error: wrong curvature parameter value")))))
-    (setq term1 (* DM-over-DH
+                     (t (error "Error: wrong curvature parameter value"))))
+         (term1 (* DM-over-DH
                    (sqrt (1+ (* ocurvature (expt DM-over-DH 2.0))))))
-    (setq term2 (/ (funcall func (* sqrt-ok DM-over-DH)) sqrt-ok))
+         (term2 (/ (funcall func (* sqrt-ok DM-over-DH)) sqrt-ok)))
     (* pref (- term1 term2))))
 
 (defun cosmo-get-comoving-volume (redshift)
@@ -369,7 +369,8 @@ Argument OCURVATURE curvature density parameter."
 
 (defun cosmo--write-calc (redshift H0 omatter olambda orel hubble
                                    los-dist transverse-dist
-                                   luminosity-dist angular-dist)
+                                   luminosity-dist angular-dist
+                                   parallax-dist comoving-vol)
   "Format and insert cosmological table in buffer.
 Argument REDSHIFT redshift.
 Argument H0 Hubble parameter today.
@@ -380,7 +381,10 @@ Argument HUBBLE Hubble parameter at given redshift.
 Argument LOS-DIST line-of-sight comoving distance at given redshift.
 Argument TRANSVERSE-DIST transverse comoving distance at given redshift.
 Argument LUMINOSITY-DIST luminosity distance at given redshift.
-Argument ANGULAR-DIST angular diameter distance at given redshift."
+Argument ANGULAR-DIST angular diameter distance at given redshift.
+Argument PARALLAX-DIST parallax distance at given redshift.
+Argument COMOVING-VOL comoving volume at given redshift."
+
   ;; Input parameters.
   (cosmo--write-calc-header)
   (insert "Input Parameters\n"
@@ -418,7 +422,11 @@ Argument ANGULAR-DIST angular diameter distance at given redshift."
           (format "- Angular diameter distance [Mpc]:         %s\n"
                   angular-dist)
           (format "- Luminosity distance [Mpc]:               %s\n"
-                  luminosity-dist))
+                  luminosity-dist)
+          (format "- Parallax distance [Mpc]:                 %s\n"
+                  parallax-dist)
+          (format "- Comoving volume [Mpc^3]:                 %s\n"
+                  comoving-vol))
   nil)
 
 (defun cosmo-calculator ()
@@ -434,12 +442,14 @@ Argument ANGULAR-DIST angular diameter distance at given redshift."
          (los-dist (cosmo-get-los-comoving-distance redshift))
          (transverse-dist (cosmo-get-transverse-comoving-distance redshift))
          (luminosity-dist (cosmo-get-luminosity-distance redshift))
-         (angular-dist (cosmo-get-angular-diameter-distance redshift)))
+         (angular-dist (cosmo-get-angular-diameter-distance redshift))
+         (parallax-dist (cosmo-get-parallax-distance redshift))
+         (comoving-vol (cosmo-get-comoving-volume redshift)))
     (with-output-to-temp-buffer cosmo-buffer
       (pop-to-buffer cosmo-buffer)
       (cosmo--write-calc redshift H0 omatter olambda orel hubble
                          los-dist transverse-dist luminosity-dist
-                         angular-dist))))
+                         angular-dist parallax-dist comoving-vol))))
 
 (provide 'cosmo)
 
