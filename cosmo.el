@@ -358,23 +358,40 @@ Argument OCURVATURE curvature density parameter."
     (message (format "%s Mpc^3"
                      (cosmo-get-comoving-volume z)))))
 
-(defun cosmo--lookback-time-integrand (redshift)
+(defun cosmo--age-integrand (redshift)
   "Loockback time integrand."
   (/ (cosmo-inv-efunc redshift) (1+ redshift)))
 
 (defun cosmo-get-lookback-time (redshift)
   "Lookback time [Gyr] for Lambda-CDM at a given REDSHIFT."
   (let ((tH (cosmo-get-hubble-time))
-        (int (cosmo-qsimp #'cosmo--lookback-time-integrand 0.0 redshift
+        (int (cosmo-qsimp #'cosmo--age-integrand 0.0 redshift
                           cosmo-int-prec cosmo-int-maxsteps)))
     (* tH int)))
 
 (defun cosmo-lookback-time ()
-  "Display comoving volume in mini-buffer."
+  "Display lookback time in mini-buffer."
   (interactive)
   (let ((z (cosmo--read-param "redshift")))
     (message (format "%s Gyr"
                      (cosmo-get-lookback-time z)))))
+
+(defun cosmo-get-age (redshift)
+  "Age of the Universe [Gyr] for Lambda-CDM at a given REDSHIFT.
+This is approximated as the age from the recombination redshift
+(roughly) set to 1000."
+  (let* ((tH (cosmo-get-hubble-time))
+         (zrec 1e3)
+         (int (cosmo-qsimp #'cosmo--age-integrand redshift zrec
+                           cosmo-int-prec cosmo-int-maxsteps)))
+    (* tH int)))
+
+(defun cosmo-age ()
+  "Display age of the Universe in mini-buffer."
+  (interactive)
+  (let ((z (cosmo--read-param "redshift")))
+    (message (format "%s Gyr"
+                     (cosmo-get-age z)))))
 
 ;;; Handle output.
 
