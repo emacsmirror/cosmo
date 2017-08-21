@@ -247,7 +247,7 @@ Optional argument JMAX maximum number of steps."
     (/ 9.78e2 H0)))
 
 (defun cosmo-hubble-time ()
-  "Display Hubble distance 1/H0 [yr] in mini-buffer."
+  "Display Hubble distance 1/H0 in mini-buffer."
   (interactive)
   (message (format "%s Gyr" (cosmo-get-hubble-time))))
 
@@ -357,6 +357,24 @@ Argument OCURVATURE curvature density parameter."
   (let ((z (cosmo--read-param "redshift")))
     (message (format "%s Mpc^3"
                      (cosmo-get-comoving-volume z)))))
+
+(defun cosmo--lookback-time-integrand (redshift)
+  "Loockback time integrand."
+  (/ (cosmo-inv-efunc redshift) (1+ redshift)))
+
+(defun cosmo-get-lookback-time (redshift)
+  "Lookback time [Gyr] for Lambda-CDM at a given REDSHIFT."
+  (let ((tH (cosmo-get-hubble-time))
+        (int (cosmo-qsimp #'cosmo--lookback-time-integrand 0.0 redshift
+                          cosmo-int-prec cosmo-int-maxsteps)))
+    (* tH int)))
+
+(defun cosmo-lookback-time ()
+  "Display comoving volume in mini-buffer."
+  (interactive)
+  (let ((z (cosmo--read-param "redshift")))
+    (message (format "%s Gyr"
+                     (cosmo-get-lookback-time z)))))
 
 ;;; Handle output.
 
