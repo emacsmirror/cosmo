@@ -60,6 +60,8 @@
 
 ;;; Todo:
 
+;; - The age of the Universe dominates to computing time. Optimize it.
+;;
 ;; - Suggest default parameters when reading them with the related
 ;;   command; set the to default values if none is entered.
 ;;
@@ -359,7 +361,7 @@ Argument OCURVATURE curvature density parameter."
                      (cosmo-get-comoving-volume z)))))
 
 (defun cosmo--age-integrand (redshift)
-  "Loockback time integrand."
+  "Loockback time integrand at a given REDSHIFT."
   (/ (cosmo-inv-efunc redshift) (1+ redshift)))
 
 (defun cosmo-get-lookback-time (redshift)
@@ -378,8 +380,7 @@ Argument OCURVATURE curvature density parameter."
 
 (defun cosmo-get-age (redshift)
   "Age of the Universe [Gyr] for Lambda-CDM at a given REDSHIFT.
-This is approximated as the age from the recombination redshift
-(roughly) set to 1000."
+This is approximated as the age since redshift 1000."
   (let* ((tH (cosmo-get-hubble-time))
          (zrec 1e3)
          (int (cosmo-qsimp #'cosmo--age-integrand redshift zrec
@@ -405,7 +406,8 @@ This is approximated as the age from the recombination redshift
 (defun cosmo--write-calc (redshift H0 omatter olambda orel hubble
                                    los-dist transverse-dist
                                    luminosity-dist angular-dist
-                                   parallax-dist comoving-vol)
+                                   parallax-dist comoving-vol
+                                   lookback-time age)
   "Format and insert cosmological table in buffer.
 Argument REDSHIFT redshift.
 Argument H0 Hubble parameter today.
@@ -418,7 +420,9 @@ Argument TRANSVERSE-DIST transverse comoving distance at given redshift.
 Argument LUMINOSITY-DIST luminosity distance at given redshift.
 Argument ANGULAR-DIST angular diameter distance at given redshift.
 Argument PARALLAX-DIST parallax distance at given redshift.
-Argument COMOVING-VOL comoving volume at given redshift."
+Argument COMOVING-VOL comoving volume at given redshift.
+Argument LOOKBACK-TIME lookback time at given redshift.
+Argument AGE age of the Universe at given redshift."
 
   ;; Input parameters.
   (cosmo--write-calc-header)
@@ -461,7 +465,12 @@ Argument COMOVING-VOL comoving volume at given redshift."
           (format "- Parallax distance [Mpc]:                 %s\n"
                   parallax-dist)
           (format "- Comoving volume [Mpc^3]:                 %s\n"
-                  comoving-vol))
+                  comoving-vol)
+          (format "- Lookback time [Gyr]:                     %s\n"
+                  lookback-time)
+          (format "- Age [Gyr]:                               %s\n"
+                  age))
+
   nil)
 
 (defun cosmo-calculator ()
@@ -479,12 +488,15 @@ Argument COMOVING-VOL comoving volume at given redshift."
          (luminosity-dist (cosmo-get-luminosity-distance redshift))
          (angular-dist (cosmo-get-angular-diameter-distance redshift))
          (parallax-dist (cosmo-get-parallax-distance redshift))
-         (comoving-vol (cosmo-get-comoving-volume redshift)))
-    (with-output-to-temp-buffer cosmo-buffer
+         (comoving-vol (cosmo-get-comoving-volume redshift))
+         (lookback-time (cosmo-get-lookback-time redshift))
+         (age (cosmo-get-age redshift)))
+   (with-output-to-temp-buffer cosmo-buffer
       (pop-to-buffer cosmo-buffer)
       (cosmo--write-calc redshift H0 omatter olambda orel hubble
                          los-dist transverse-dist luminosity-dist
-                         angular-dist parallax-dist comoving-vol))))
+                         angular-dist parallax-dist comoving-vol
+                         lookback-time age))))
 
 (provide 'cosmo)
 
