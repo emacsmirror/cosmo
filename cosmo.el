@@ -237,7 +237,7 @@ Optional argument JMAX maximum number of steps."
     (/ 3.0e5 H0)))
 
 (defun cosmo-hubble-distance ()
-  "Display Hubble distance c/H0 [Mpc] in mini-buffer."
+  "Display Hubble distance c/H0 in mini-buffer."
   (interactive)
   (message (format "%s Mpc" (cosmo-get-hubble-distance))))
 
@@ -247,7 +247,7 @@ Optional argument JMAX maximum number of steps."
     (/ 9.78e2 H0)))
 
 (defun cosmo-hubble-time ()
-  "Display Hubble distance 1/H0 [yr] in mini-buffer."
+  "Display Hubble time 1/H0 in mini-buffer."
   (interactive)
   (message (format "%s Gyr" (cosmo-get-hubble-time))))
 
@@ -358,6 +358,43 @@ Argument OCURVATURE curvature density parameter."
     (message (format "%s Mpc^3"
                      (cosmo-get-comoving-volume z)))))
 
+(defun cosmo--age-integrand (redshift)
+  "Universe age integrand at a given REDSHIFT."
+  (/ (cosmo-inv-efunc redshift) (1+ redshift)))
+
+(defun cosmo-get-lookback-time (redshift)
+  "Lookback time [Gyr] for Lambda-CDM at a given REDSHIFT."
+  (let ((tH (cosmo-get-hubble-time))
+        (int (cosmo-qsimp #'cosmo--age-integrand 0.0 redshift
+                          cosmo-int-prec cosmo-int-maxsteps)))
+    (* tH int)))
+
+(defun cosmo-lookback-time ()
+  "Display lookback time in mini-buffer."
+  (interactive)
+  (let ((z (cosmo--read-param "redshift")))
+    (message (format "%s Gyr"
+                     (cosmo-get-lookback-time z)))))
+
+(defun cosmo-get-age (redshift)
+  ;; This is much slower than other functions.
+  "Age of the Universe [Gyr] for Lambda-CDM at a given REDSHIFT.
+This is approximated as the age since equality redshift."
+  (let* ((tH (cosmo-get-hubble-time))
+         (omatter (gethash "omatter" cosmo--params))
+         (H0 (gethash "H0 [Km/s/Mpc]" cosmo--params))
+         (zeq (* 2.5 1e4 omatter (expt (/ H0 100.0) 2.0)))
+         (int (cosmo-qsimp #'cosmo--age-integrand redshift zeq
+                           cosmo-int-prec cosmo-int-maxsteps)))
+    (* tH int)))
+
+(defun cosmo-age ()
+  "Display age of the Universe in mini-buffer."
+  (interactive)
+  (let ((z (cosmo--read-param "redshift")))
+    (message (format "%s Gyr"
+                     (cosmo-get-age z)))))
+
 ;;; Handle output.
 
 (defun cosmo--write-calc-header ()
@@ -370,7 +407,8 @@ Argument OCURVATURE curvature density parameter."
 (defun cosmo--write-calc (redshift H0 omatter olambda orel hubble
                                    los-dist transverse-dist
                                    luminosity-dist angular-dist
-                                   parallax-dist comoving-vol)
+                                   parallax-dist comoving-vol
+                                   lookback-time)
   "Format and insert cosmological table in buffer.
 Argument REDSHIFT redshift.
 Argument H0 Hubble parameter today.
@@ -383,7 +421,8 @@ Argument TRANSVERSE-DIST transverse comoving distance at given redshift.
 Argument LUMINOSITY-DIST luminosity distance at given redshift.
 Argument ANGULAR-DIST angular diameter distance at given redshift.
 Argument PARALLAX-DIST parallax distance at given redshift.
-Argument COMOVING-VOL comoving volume at given redshift."
+Argument COMOVING-VOL comoving volume at given redshift.
+Argument LOOKBACK-TIME lookback time at given redshift."
 
   ;; Input parameters.
   (cosmo--write-calc-header)
@@ -426,7 +465,9 @@ Argument COMOVING-VOL comoving volume at given redshift."
           (format "- Parallax distance [Mpc]:                 %s\n"
                   parallax-dist)
           (format "- Comoving volume [Mpc^3]:                 %s\n"
-                  comoving-vol))
+                  comoving-vol)
+          (format "- Lookback time [Gyr]:                     %s\n"
+                  lookback-time))
   nil)
 
 (defun cosmo-calculator ()
@@ -444,12 +485,14 @@ Argument COMOVING-VOL comoving volume at given redshift."
          (luminosity-dist (cosmo-get-luminosity-distance redshift))
          (angular-dist (cosmo-get-angular-diameter-distance redshift))
          (parallax-dist (cosmo-get-parallax-distance redshift))
-         (comoving-vol (cosmo-get-comoving-volume redshift)))
-    (with-output-to-temp-buffer cosmo-buffer
+         (comoving-vol (cosmo-get-comoving-volume redshift))
+         (lookback-time (cosmo-get-lookback-time redshift)))
+   (with-output-to-temp-buffer cosmo-buffer
       (pop-to-buffer cosmo-buffer)
       (cosmo--write-calc redshift H0 omatter olambda orel hubble
                          los-dist transverse-dist luminosity-dist
-                         angular-dist parallax-dist comoving-vol))))
+                         angular-dist parallax-dist comoving-vol
+                         lookback-time))))
 
 (provide 'cosmo)
 
