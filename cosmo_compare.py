@@ -52,6 +52,10 @@ def print_curves(reds, cosmo):
                name='angular-diameter-distance [Mpc]')
     sexp_print(reds, cosmo.comoving_volume(reds).value,
                name='comoving-volume [Mpc^3]')
+    sexp_print(reds, cosmo.lookback_time(reds).value,
+               name='lookback-time [Gyr]')
+    sexp_print(reds, cosmo.age(reds).value,
+               name='age [Gyr]')
 
 
 def print_open_cosmo():

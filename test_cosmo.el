@@ -127,6 +127,14 @@ Argument OREL relativistic density parameter today."
   (assert (cosmo-almost-eq
            (cosmo-get-comoving-volume 1000.0) 1.00014515316e+13 3e-3)))
 
+(defun cosmo-test-lookback-time ()
+  (assert (cosmo-almost-eq
+           (cosmo-get-lookback-time 1000.0) 13.3803575903 4e-3)))
+
+(defun cosmo-test-age ()
+  (assert (cosmo-almost-eq
+           (cosmo-get-age 0.0) 13.3807781911 3e-3)))
+
 (cosmo-test-efunc)
 (cosmo-test-inv-efunc)
 (cosmo-test-hubble)
@@ -137,6 +145,8 @@ Argument OREL relativistic density parameter today."
 (cosmo-test-luminosity-distance)
 (cosmo-test-angular-diameter-distance)
 (cosmo-test-comoving-volume)
+(cosmo-test-lookback-time)
+(cosmo-test-age)
 
 ;;; Close cosmology.
 
@@ -157,8 +167,18 @@ Argument OREL relativistic density parameter today."
   (assert (cosmo-almost-eq
            (cosmo-get-comoving-volume 1000.0) 1.24288502093e+13 3e-3)))
 
+(defun cosmo-test-lookback-time ()
+  (assert (cosmo-almost-eq
+           (cosmo-get-lookback-time 1000.0) 13.7206066124 4e-3)))
+
+(defun cosmo-test-age ()
+  (assert (cosmo-almost-eq
+           (cosmo-get-age 0.0) 13.7210465251 3e-3)))
+
 (cosmo-test-transverse-comoving-distance-close)
 (cosmo-test-comoving-volume)
+(cosmo-test-lookback-time)
+(cosmo-test-age)
 
 ;;; Flat cosmology.
 
@@ -178,9 +198,18 @@ Argument OREL relativistic density parameter today."
   (assert (cosmo-almost-eq
            (cosmo-get-comoving-volume 1000.0) 1.06780313213e+13 3e-3)))
 
+(defun cosmo-test-lookback-time ()
+  (assert (cosmo-almost-eq
+           (cosmo-get-lookback-time 1000.0) 13.4664471061 4e-3)))
+
+(defun cosmo-test-age ()
+  (assert (cosmo-almost-eq
+           (cosmo-get-age 0.0) 13.466983947 3e-3)))
+
 (cosmo-test-transverse-comoving-distance-flat)
 (cosmo-test-comoving-volume)
-
+(cosmo-test-lookback-time)
+(cosmo-test-age)
 
 ;;; Benchmarks
 
