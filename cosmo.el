@@ -383,7 +383,8 @@ This is approximated as the age since equality redshift."
   (let* ((tH (cosmo-get-hubble-time))
          (omatter (gethash "omatter" cosmo--params))
          (H0 (gethash "H0 [Km/s/Mpc]" cosmo--params))
-         (zeq (* 2.5 1e4 omatter (expt (/ H0 100.0) 2.0)))
+         (zeq                           ; arXiv:astro-ph/9709112
+          (* 2.5 1e4 omatter (expt (/ H0 100.0) 2.0)))
          (int (cosmo-qsimp #'cosmo--age-integrand redshift zeq
                            cosmo-int-prec cosmo-int-maxsteps)))
     (* tH int)))
