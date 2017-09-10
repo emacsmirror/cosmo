@@ -65,7 +65,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   the =cosmo.el= file into a sub-folder under your Emacs
   configuration directory. (In general this directory can be
   accessed from Emacs, independently from the operating system,
-  by typing the command =C-x C-f ~/.emacs.d/=.) E.g., on GNU
+  by typing the command =C-x C-f ~/.emacs.d/=.) E.g., on Unix
   systems:
 
   #+BEGIN_SRC shell
@@ -73,8 +73,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   cp cosmo.el ~/.emacs.d/cosmo-el
   #+END_SRC
 
-  Open your Emacs configuration file (e.g., =~/.emacs= on GNU
-  systems), and add the following lines:
+  Add the path to the =cosmo.el= package folder into your Emacs
+  configuration file (e.g., =~/.emacs= on Unix systems):
 
   #+BEGIN_SRC emacs-lisp
   ;; Cosmological calculator
@@ -84,10 +84,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 * Usage
 
-  Open Emacs and type =M-x cosmo-command= (the notation =M-x=
-  means that the =ALT= and =x= keys must be pressed
-  simultaneously), where the =command= name varies depending on
-  the desired computation:
+  Open Emacs and type =M-x cosmo-command=, where the =command=
+  name varies depending on the desired computation:
 
   # List all interactive commands:
   #   (apropos-command "cosmo-")
@@ -121,11 +119,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   - cosmo-hubble :: Display Hubble parameter in mini-buffer.
 
-  - cosmo-hubble-distance :: Display Hubble distance c/H0 [Mpc]
-       in mini-buffer.
-
-  - cosmo-hubble-time :: Display Hubble distance 1/H0 [Gyr] in
+  - cosmo-hubble-distance :: Display Hubble distance c/H0 in
        mini-buffer.
+
+  - cosmo-hubble-time :: Display Hubble time 1/H0 in mini-buffer.
 
   - cosmo-lookback-time :: Display lookback time in mini-buffer.
 
