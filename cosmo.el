@@ -7,7 +7,7 @@
 ;; Version: 0.1
 ;; Package-Requires: ((emacs "24.4"))
 ;; Keywords: tools
-;; Homepage: https://gitlab.com/montanari/cosmo-el
+;; URL: https://gitlab.com/montanari/cosmo-el
 ;;
 ;; This file is not part of GNU Emacs.
 ;;
