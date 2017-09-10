@@ -22,8 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 * Description
 
-  /Easily compute cosmological quantities from the Emacs text
-  editor./
+  /Cosmological calculator for the Emacs text editor./
 
   This package provides a cosmological calculator for Lambda-CDM
   models. Such a framework describes a homogeneous and isotropic
