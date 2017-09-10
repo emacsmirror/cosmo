@@ -123,6 +123,7 @@
          (unless (>= value 0.0)
            (error "Error: density parameter must be positive")))))
 
+;;;###autoload
 (defun cosmo-set-params ()
   "Change the values of cosmological parameters."
   (interactive)
@@ -225,6 +226,7 @@ Optional argument JMAX maximum number of steps."
   (let ((H0 (gethash "H0 [Km/s/Mpc]" cosmo--params)))
     (* H0 (cosmo-efunc redshift))))
 
+;;;###autoload
 (defun cosmo-hubble ()
   "Display Hubble parameter in mini-buffer."
   (interactive)
@@ -236,6 +238,7 @@ Optional argument JMAX maximum number of steps."
   (let ((H0 (gethash "H0 [Km/s/Mpc]" cosmo--params)))
     (/ 3.0e5 H0)))
 
+;;;###autoload
 (defun cosmo-hubble-distance ()
   "Display Hubble distance c/H0 in mini-buffer."
   (interactive)
@@ -246,6 +249,7 @@ Optional argument JMAX maximum number of steps."
   (let ((H0 (gethash "H0 [Km/s/Mpc]" cosmo--params)))
     (/ 9.78e2 H0)))
 
+;;;###autoload
 (defun cosmo-hubble-time ()
   "Display Hubble time 1/H0 in mini-buffer."
   (interactive)
@@ -258,6 +262,7 @@ Optional argument JMAX maximum number of steps."
                           cosmo-int-prec cosmo-int-maxsteps)))
     (* DH int)))
 
+;;;###autoload
 (defun cosmo-los-comoving-distance ()
   "Display line-of-sight comoving distance in mini-buffer."
   (interactive)
@@ -278,6 +283,7 @@ Optional argument JMAX maximum number of steps."
           ((< ocurvature 0)
            (* DH-over-sqrtok (sin (/ DC DH-over-sqrtok)))))))
 
+;;;###autoload
 (defun cosmo-transverse-comoving-distance ()
   "Display transverse comoving distance in mini-buffer."
   (interactive)
@@ -290,6 +296,7 @@ Optional argument JMAX maximum number of steps."
   (let* ((DM (cosmo-get-transverse-comoving-distance redshift)))
     (/ DM (1+ redshift))))
 
+;;;###autoload
 (defun cosmo-angular-diameter-distance ()
   "Display angular diameter distance in mini-buffer."
   (interactive)
@@ -302,6 +309,7 @@ Optional argument JMAX maximum number of steps."
   (let* ((DM (cosmo-get-transverse-comoving-distance redshift)))
     (* DM (1+ redshift))))
 
+;;;###autoload
 (defun cosmo-luminosity-distance ()
   "Display luminosity distance in mini-buffer."
   (interactive)
@@ -317,6 +325,7 @@ Optional argument JMAX maximum number of steps."
          (ocurvature (cosmo-get-ocurvature)))
     (/ DM (+ dM (sqrt (1+ (* ocurvature dM dM)))))))
 
+;;;###autoload
 (defun cosmo-parallax-distance ()
   "Display parallax distance in mini-buffer."
   (interactive)
@@ -351,6 +360,7 @@ Argument OCURVATURE curvature density parameter."
         (* (/ 4.0 3.0) float-pi (expt DM 3.0))
         (cosmo--get-comoving-volume-nonflat DM DH ocurvature))))
 
+;;;###autoload
 (defun cosmo-comoving-volume ()
   "Display comoving volume in mini-buffer."
   (interactive)
@@ -369,6 +379,7 @@ Argument OCURVATURE curvature density parameter."
                           cosmo-int-prec cosmo-int-maxsteps)))
     (* tH int)))
 
+;;;###autoload
 (defun cosmo-lookback-time ()
   "Display lookback time in mini-buffer."
   (interactive)
@@ -389,6 +400,7 @@ This is approximated as the age since equality redshift."
                            cosmo-int-prec cosmo-int-maxsteps)))
     (* tH int)))
 
+;;;###autoload
 (defun cosmo-age ()
   "Display age of the Universe in mini-buffer."
   (interactive)
@@ -471,6 +483,7 @@ Argument LOOKBACK-TIME lookback time at given redshift."
                   lookback-time))
   nil)
 
+;;;###autoload
 (defun cosmo-calculator ()
   "Compute cosmology and display summary table in a new buffer."
   (interactive)
