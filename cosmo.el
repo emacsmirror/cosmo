@@ -76,7 +76,7 @@
 
 (defgroup cosmo nil
   "Cosmological calculator."
-  :group 'convenience)
+  :group 'applications)
 
 (defcustom cosmo-int-prec 1e-3
   "Fractional accuracy for numerical integrals."
