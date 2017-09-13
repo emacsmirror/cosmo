@@ -90,7 +90,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   # List all interactive commands:
   #   (apropos-command "cosmo-")
 
-  - cosmo-age :: Display age of the Universe in mini-buffer.
+  - cosmo-age :: Display age of the Universe in
+       mini-buffer. (This command may take a few seconds.)
 
   - cosmo-angular-diameter-distance :: Display angular diameter
        distance in mini-buffer.
