@@ -50,10 +50,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   =cosmo-calculator= command is based on Gnuastro =astcosmiccal=
   program (v0.2).
 
-* Download
-
-
-
 * Installation
 
 ** MELPA
