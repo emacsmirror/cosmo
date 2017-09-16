@@ -52,35 +52,41 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 * Download
 
-  Downloaded the source code from the [[https://gitlab.com/montanari/cosmo-el][git repository page]].
 
-  Alternatively, clone the git repository:
-  #+BEGIN_SRC shell
-  git clone git@gitlab.com:montanari/cosmo-el.git
-  #+END_SRC
 
 * Installation
 
-  This program is meant to work with the [[https://www.gnu.org/software/emacs/][Emacs]] text editor. Copy
-  the =cosmo.el= file into a sub-folder under your Emacs
-  configuration directory. (In general this directory can be
-  accessed from Emacs, independently from the operating system,
-  by typing the command =C-x C-f ~/.emacs.d/=.) E.g., on Unix
-  systems:
+** MELPA
 
-  #+BEGIN_SRC shell
-  mkdir ~/.emacs.d/cosmo-el
-  cp cosmo.el ~/.emacs.d/cosmo-el
-  #+END_SRC
+   The package is available on the [[https://melpa.org/][MELPA]] repository. Please
+   follow the related installation instructions.
 
-  Add the path to the =cosmo.el= package folder into your Emacs
-  configuration file (e.g., =~/.emacs= on Unix systems):
+** Manual installation
 
-  #+BEGIN_SRC emacs-lisp
-  ;; Cosmological calculator
-  (add-to-list 'load-path "~/.emacs.d/cosmo-el/")
-  (require 'cosmo)
-  #+END_SRC
+   [[https://gitlab.com/montanari/cosmo-el][Download]] or clone the git repository:
+   #+BEGIN_SRC shell
+   git clone git@gitlab.com:montanari/cosmo-el.git
+   #+END_SRC
+
+   Copy the =cosmo.el= file into a sub-folder under your Emacs
+   configuration directory. (In general this directory can be
+   accessed from Emacs, independently from the operating system,
+   by typing the command =C-x C-f ~/.emacs.d/=.) E.g., on Unix
+   systems:
+
+   #+BEGIN_SRC shell
+   mkdir ~/.emacs.d/cosmo-el
+   cp cosmo.el ~/.emacs.d/cosmo-el
+   #+END_SRC
+
+   Add the path to the =cosmo.el= package folder into your Emacs
+   configuration file (e.g., =~/.emacs= on Unix systems):
+
+   #+BEGIN_SRC emacs-lisp
+   ;; Cosmological calculator
+   (add-to-list 'load-path "~/.emacs.d/cosmo-el/")
+   (require 'cosmo)
+   #+END_SRC
 
 * Usage
 
@@ -90,7 +96,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   # List all interactive commands:
   #   (apropos-command "cosmo-")
 
-  - cosmo-age :: Display age of the Universe in mini-buffer.
+  - cosmo-age :: Display age of the Universe in
+       mini-buffer. (This command may take a few seconds.)
 
   - cosmo-angular-diameter-distance :: Display angular diameter
        distance in mini-buffer.

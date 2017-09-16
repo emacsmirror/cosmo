@@ -1,3 +1,5 @@
+#-*-mode:text-*-
+
 # Compiled
 *.elc
 
@@ -13,3 +15,6 @@
 
 # Temporariry files
 install.sh
+numlib.el
+numrecip.cl
+tmp.el
