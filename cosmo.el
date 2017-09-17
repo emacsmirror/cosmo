@@ -26,11 +26,26 @@
 
 ;;; Commentary:
 
-;; This package provides a cosmological calculator for Lambda-CDM
-;; models.  Such a framework describes a homogeneous and isotropic
-;; universe containing a cosmological constant (Lambda) and a Cold
-;; Dark Matter (CDM) component, besides ordinary species.  The
-;; model is characterized by the following parameters:
+;; Cosmological calculator for Lambda-CDM models.
+;;
+;; The package provides interactive commands for handy computation of
+;; cosmological distance measures.  For instance, to display a summary
+;; table, type:
+;;
+;;   M-x cosmo-calculator
+;;
+;; and to set cosmological parameters, type:
+;;
+;;   M-x cosmo-set-params
+;;
+;; All cosmological quantities are computed at a given value for the
+;; gravitational `redshift' of photons frequency due to the expansion of
+;; the Universe.
+;;
+;; The Lambda-CDM model describes a homogeneous and isotropic universe
+;; containing a cosmological constant (Lambda) and a Cold Dark Matter
+;; (CDM) component, besides ordinary species.  It is characterized by
+;; the following parameters:
 ;;
 ;; - H_0 :: Hubble parameter (expansion rate) today.
 ;; - Omega_m0 :: Matter density parameter today.
@@ -41,12 +56,6 @@
 ;;               parameter is derived from the others above
 ;;               according to Friedmann's equation
 ;;               Omega_m0 + Omega_Lambda + Omega_r0 + Omega_k0 = 1.
-;;
-;; All cosmological quantities are computed at a given redshift
-;; value:
-;;
-;; - redshift :: Gravitational redshift of photons frequency due to the
-;;               expansion of the Universe.
 ;;
 ;; Definitions follow Hogg (1999)
 ;; <https://arxiv.org/abs/astro-ph/9905116>.
