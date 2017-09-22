@@ -54,8 +54,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ** MELPA
 
-   The package is available on the [[https://melpa.org/][MELPA]] repository. Please
-   follow the related installation instructions.
+   The package is available on the [[https://melpa.org/][MELPA]] repository. Enable the
+   repository following the related instructions, then type:
+
+   #+BEGIN_EXAMPLE
+   M-x package-list-packages
+   #+END_EXAMPLE
+
+   Select the =cosmo= package for installation.
 
 ** Manual installation
 
@@ -155,12 +161,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 * Contributing
 
-  Please see [[http://orgmode.org/worg/org-contribute.html#patches][this page]] for a good example of patches
-  contributions.
+  Any kind of contribution is welcome.
 
-  More substantial contributions should proceed through git
-  [[https://git-scm.com/book/en/v2/Distributed-Git-Distributed-Workflows][Integration-Manager Workflow]]. In short: fork the repository, do
-  the changes on a new branch (the master branch should only be
-  used to pull updates from the original git remote onto your
-  personal repository) and notify via the issue tracker or email
-  about the modifications.
+  For small contributions simple [[http://orgmode.org/worg/org-contribute.html#patches][patches]] are welcome. For more
+  substantial contributions the following workflow may be considered:
+
+  - Fork the repository.
+  - Do the changes on a new branch (the master branch should only
+    be used to pull updates from the original repository, added
+    as a git remote).
+  - Notify via the issue tracker or email about the modifications
+    (please provide the git address and branch name to be merged).
