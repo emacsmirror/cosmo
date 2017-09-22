@@ -163,8 +163,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   Any kind of contribution is welcome.
 
-  For small contributions simple [[http://orgmode.org/worg/org-contribute.html#patches][patches]] are welcome. For more
-  substantial contributions the following workflow may be considered:
+  For small contributions simple patches are welcome (the
+  preferred way is to follow, e.g., [[http://orgmode.org/worg/org-contribute.html#patches][org-mode conventions]]). For
+  more substantial contributions the following workflow may be
+  considered:
 
   - Fork the repository.
   - Do the changes on a new branch (the master branch should only
